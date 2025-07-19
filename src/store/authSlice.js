@@ -1,0 +1,63 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { fetchLogin, fetchSignUp } from "../jobportal_api/authAPI";
+
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async ({ username, password }) => {
+    const user = await fetchLogin(username, password);
+    return user;
+  }
+);
+
+export const signupUser = createAsyncThunk("auth/signup", async (formData) => {
+  const user = await fetchSignUp(formData);
+  return user;
+});
+
+const savedUser = JSON.parse(localStorage.getItem("user"));
+
+const authSlice = createSlice({
+  name: "auth",
+  initialState: {
+    loading: false,
+    data: savedUser || null,
+    error: null,
+    status: savedUser?.success || false,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+        state.status = action.payload.success;
+        if (action.payload.success) {
+          localStorage.setItem("user", JSON.stringify(action.payload));
+        }
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.msg;
+      })
+      .addCase(signupUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(signupUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+        state.status = action.payload.success;
+        if (action.payload.success) {
+          localStorage.setItem("user", JSON.stringify(action.payload));
+        }
+      })
+      .addCase(signupUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.msg;
+      });
+  },
+});
+
+export default authSlice.reducer;

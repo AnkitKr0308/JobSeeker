@@ -1,0 +1,45 @@
+.btn {
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+  outline: none;
+  display: block;
+  width: 100%;
+}
+
+.btn-blue {
+  background-color: #0a2540;
+  color: white;
+}
+
+.btn-blue:hover {
+  background-color: #163d65;
+}
+
+.btn-white {
+  background-color: white;
+  color: #0a2540;
+  border: 1px solid #0a2540;
+}
+
+.btn-white:hover {
+  background-color: #f1f1f1;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.3);
+}
+
+.btn:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
