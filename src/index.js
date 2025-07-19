@@ -8,6 +8,7 @@ import AuthPage from "./components/Authentication/AuthPage";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import ProtectedRoute from "./components/Authentication/ProtectedRoute";
+import HomePage from "./pages/HomePage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -27,6 +28,12 @@ const router = createBrowserRouter([
         <App />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        path: "/",
+        element: <HomePage />,
+      },
+    ],
   },
 ]);
 

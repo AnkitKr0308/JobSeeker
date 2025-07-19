@@ -14,6 +14,10 @@ export const signupUser = createAsyncThunk("auth/signup", async (formData) => {
   return user;
 });
 
+export const logoutUser = createAsyncThunk("auth/logout", async () => {
+  localStorage.removeItem("user");
+});
+
 const savedUser = JSON.parse(localStorage.getItem("user"));
 
 const authSlice = createSlice({
@@ -56,6 +60,18 @@ const authSlice = createSlice({
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.msg;
+      })
+      .addCase(logoutUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = {};
+        state.status = false;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });

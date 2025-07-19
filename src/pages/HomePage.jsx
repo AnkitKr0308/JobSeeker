@@ -1,5 +1,5 @@
 import React from "react";
-import Home from "../components/Authentication/AuthPage";
+import Home from "../components/Home/Home";
 
 function HomePage() {
   return (

@@ -1,10 +1,14 @@
 import "./css/App.css";
-import ProtectedRoute from "./components/Authentication/ProtectedRoute";
+import Navbar from "./components/Navbar/Navbar";
+import { Outlet } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-      <ProtectedRoute></ProtectedRoute>
+      <Navbar />
+      <div className="Outlet">
+        <Outlet />
+      </div>
     </div>
   );
 }

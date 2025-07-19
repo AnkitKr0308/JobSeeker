@@ -1,5 +1,5 @@
 import React from "react";
-import "../css/inputstyle.css";
+import "../../css/inputstyle.css";
 
 function Input({
   label,
@@ -15,7 +15,6 @@ function Input({
   ...props
 }) {
   return (
-    
     <div className="input-group">
       {fields.map((field) => (
         <div key={field.id}>

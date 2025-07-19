@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../css/homestyle.css";
-import Button from "../../templates/Button";
-import Input from "../../templates/Input";
+import Button from "../templates/Button"
+import Input from "../templates/Input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { fetchRoles } from "../../jobportal_api/authAPI";
 import { useDispatch, useSelector } from "react-redux";

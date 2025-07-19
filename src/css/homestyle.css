@@ -89,3 +89,17 @@
     width: 100%;
   }
 }
+
+.imgbtn img {
+  margin: 0 20px;           /* adds horizontal space between images */
+  border: 2px solid #ccc;   /* light gray border */
+  padding: 10px;            /* space inside the border */
+  border-radius: 8px;       /* optional: rounded corners */
+  cursor: pointer;          /* makes it look clickable */
+  transition: transform 0.2s ease;
+}
+
+.imgbtn img:hover {
+  transform: scale(1.05);   /* optional: hover effect */
+}
+
