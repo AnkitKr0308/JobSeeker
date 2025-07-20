@@ -8,9 +8,13 @@
   transition: background-color 0.3s ease, transform 0.2s ease;
   font-weight: 600;
   outline: none;
+  margin-top: 10px;
 }
 
-
+.dropdown {
+  display: inline-block;
+  width: auto;
+}
 
 .btn-blue {
   background-color: #0a2540;
@@ -44,5 +48,3 @@
   color: #666;
   cursor: not-allowed;
 }
-
-

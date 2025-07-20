@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children, allowedRoles }) {
   const authenticated = useSelector((state) => state.auth.status);
-  const user = useSelector((state) => state.auth.data?.user);
+  const user = useSelector((state) => state.auth.data);
   const loading = useSelector((state) => state.auth.loading);
 
   if (loading) {
@@ -23,3 +23,4 @@ function ProtectedRoute({ children, allowedRoles }) {
 }
 
 export default ProtectedRoute;
+ 

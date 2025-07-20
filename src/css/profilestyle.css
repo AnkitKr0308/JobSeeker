@@ -1,0 +1,22 @@
+
+
+.profile-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.profile-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+
+.profile-card {
+  background-color: #f9f9f9;
+  padding: 30px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}

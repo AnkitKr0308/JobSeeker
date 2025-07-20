@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchLogin, fetchSignUp } from "../jobportal_api/authAPI";
+import {
+  fetchLogin,
+  fetchSignUp,
+  fetchUpdatePassword,
+} from "../jobportal_api/authAPI";
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -17,6 +21,14 @@ export const signupUser = createAsyncThunk("auth/signup", async (formData) => {
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
   localStorage.removeItem("user");
 });
+
+export const updatePassword = createAsyncThunk(
+  "auth/updatepassword",
+  async (formData) => {
+    const result = await fetchUpdatePassword(formData);
+    return result;
+  }
+);
 
 const savedUser = JSON.parse(localStorage.getItem("user"));
 
@@ -70,6 +82,18 @@ const authSlice = createSlice({
         state.status = false;
       })
       .addCase(logoutUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(updatePassword.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        state.loading = false;
+        // state.data = action.payload;
+        state.status = action.payload.success;
+      })
+      .addCase(updatePassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

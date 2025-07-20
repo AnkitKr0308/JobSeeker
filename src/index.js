@@ -12,6 +12,9 @@ import HomePage from "./pages/HomePage";
 import PostJobPage from "./pages/PostJobPage";
 import FindJobPage from "./pages/FindJobPage";
 import Unauthorized from "./components/Authentication/Unauthorized";
+import SettingsPage from "./pages/SettingsPage";
+import ProfilePage from "./pages/ProfilePage";
+import ChangePassword from "./components/Navbar/Profile/ChangePassword";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -51,6 +54,18 @@ const router = createBrowserRouter([
       {
         path: "/find-job",
         element: <FindJobPage />,
+      },
+      {
+        path: "/settings",
+        element: <SettingsPage />,
+      },
+      {
+        path: "/profile",
+        element: <ProfilePage />,
+      },
+      {
+        path: "/changepassword",
+        element: <ChangePassword />,
       },
     ],
   },

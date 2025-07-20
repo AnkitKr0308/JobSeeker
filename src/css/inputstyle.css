@@ -1,43 +1,71 @@
+/* Container wrapping all inputs vertically */
 .input-group {
   display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-  width: 100%;               
+  flex-direction: column; /* stack label-input rows vertically */
+  gap: 20px;
+  width: 100%;
   box-sizing: border-box;
 }
 
-.text-input,
-.text-area {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.5;
+/* Each label + input pair: side by side */
+.input-components {
+  display: flex;
+  align-items: center; /* vertical center */
+  width: 100%;
+  box-sizing: border-box;
 }
 
-
-
-
-
+/* Label styling */
 .input-label {
   font-weight: 600;
-  margin-bottom: 6px;
   color: #0a2540;
+  /* remove fixed width */
+  text-align: left;
+  /* optional: min-width for consistent spacing */
+  min-width: 150px;
 }
 
+/* Text input styling */
 .text-input {
+  /* Push input to right */
+  margin-left: auto;
   padding: 10px 12px;
   font-size: 16px;
   border: 1.5px solid #ccc;
   border-radius: 6px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   outline: none;
-  width: 100%;               
   box-sizing: border-box;
+  width: 300px; /* or max-width as needed */
 }
 
+/* Focus state */
 .text-input:focus {
   border-color: #0a2540;
   box-shadow: 0 0 5px rgba(10, 37, 64, 0.4);
 }
 
+/* Textarea styling */
+.text-area {
+  margin-left: auto;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+  min-height: 80px;
+  resize: vertical;
+  width: 300px; /* same width as input */
+}
+
+/* Textarea focus */
+.text-area:focus {
+  border-color: #0a2540;
+  box-shadow: 0 0 5px rgba(10, 37, 64, 0.4);
+}
+
+/* Error styling */
 .input-error {
   border-color: #e74c3c !important;
 }
@@ -51,31 +79,4 @@
   color: #e74c3c;
   font-size: 13px;
   margin-top: 4px;
-}
-
-.text-area {
-  padding: 10px 12px;
-  font-size: 16px;
-  border: 1.5px solid #ccc;
-  border-radius: 6px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  outline: none;
-  width: 100%;
-  box-sizing: border-box;
-  min-height: 80px;        
-  resize: vertical;         
-}
-
-.text-area:focus {
-  border-color: #0a2540;
-  box-shadow: 0 0 5px rgba(10, 37, 64, 0.4);
-}
-
-.text-area.input-error {
-  border-color: #e74c3c !important;
-}
-
-.text-area.input-error:focus {
-  border-color: #e74c3c !important;
-  box-shadow: 0 0 5px rgba(231, 76, 60, 0.6);
 }

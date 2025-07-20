@@ -17,13 +17,14 @@ function Input({
   return (
     <div className="input-group">
       {fields.map((field) => (
-        <div key={field.id}>
+        <div className="input-components" key={field.id}>
           <label htmlFor={field.id} className="input-label">
             {field.label}
           </label>
           {field.type === "text-area" ? (
             <textarea
               id={field.id}
+              name={field.id}
               className={`text-area ${error ? "input-error" : ""}`}
               placeholder={field.placeholder}
               type={field.type || "text"}

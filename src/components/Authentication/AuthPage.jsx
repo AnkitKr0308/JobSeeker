@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../css/homestyle.css";
-import Button from "../templates/Button"
+import Button from "../templates/Button";
 import Input from "../templates/Input";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { fetchRoles } from "../../jobportal_api/authAPI";
@@ -83,27 +83,26 @@ function AuthPage() {
     }
   };
 
-const signup = async () => {
-  const signupResult = await dispatch(signupUser(formData));
-  const signupResponse = signupResult.payload;
+  const signup = async () => {
+    const signupResult = await dispatch(signupUser(formData));
+    const signupResponse = signupResult.payload;
 
-  if (signupResponse.success) {
-    const loginResult = await dispatch(
-      loginUser({ username: formData.email, password: formData.password })
-    );
+    if (signupResponse.success) {
+      const loginResult = await dispatch(
+        loginUser({ username: formData.email, password: formData.password })
+      );
 
-    const loginResponse = loginResult.payload;
+      const loginResponse = loginResult.payload;
 
-    if (loginResponse.success) {
-      navigate("/");
+      if (loginResponse.success) {
+        navigate("/");
+      } else {
+        setError("Signup successful but login failed.");
+      }
     } else {
-      setError("Signup successful but login failed.");
+      setError(signupResponse?.msg || "Signup failed.");
     }
-  } else {
-    setError(signupResponse?.msg || "Signup failed.");
-  }
-};
-
+  };
 
   useEffect(() => {
     if (user) {
@@ -139,7 +138,7 @@ const signup = async () => {
           <div className="login-box">
             {isLogin ? (
               <div>
-                <h1>Login</h1>
+                <h1 className="header">Login</h1>
                 <Input
                   fields={loginFields}
                   onChange={handleChange}
@@ -156,7 +155,7 @@ const signup = async () => {
               </div>
             ) : (
               <div>
-                <h1>Signup</h1>
+                <h1 className="header">Signup</h1>
                 <Input
                   fields={signupFields}
                   onChange={handleChange}

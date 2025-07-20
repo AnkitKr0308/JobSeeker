@@ -71,3 +71,28 @@ export const fetchSignUp = async (data) => {
     alert("Something went wrong. Please try again later.");
   }
 };
+
+export const fetchUpdatePassword = async (formData) => {
+  try {
+    const response = await fetch(
+      `${base_url}/Users/updatepassword/${formData.email}`,
+      {
+        method: "PUT",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+
+    const result = await response.json();
+
+    if (response.ok) {
+      return { success: true, result };
+    } else {
+      return { success: false, message: "Failed to update password" };
+    }
+  } catch (e) {
+    console.error("Error updating password", e);
+  }
+};
