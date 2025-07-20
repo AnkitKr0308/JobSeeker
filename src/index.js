@@ -9,6 +9,9 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import ProtectedRoute from "./components/Authentication/ProtectedRoute";
 import HomePage from "./pages/HomePage";
+import PostJobPage from "./pages/PostJobPage";
+import FindJobPage from "./pages/FindJobPage";
+import Unauthorized from "./components/Authentication/Unauthorized";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -22,6 +25,10 @@ const router = createBrowserRouter([
     element: <AuthPage />,
   },
   {
+    path: "/unauthorized",
+    element: <Unauthorized />,
+  },
+  {
     path: "/",
     element: (
       <ProtectedRoute>
@@ -32,6 +39,18 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "/post-job",
+        element: (
+          <ProtectedRoute allowedRoles={["Admin", "Employer"]}>
+            <PostJobPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/find-job",
+        element: <FindJobPage />,
       },
     ],
   },

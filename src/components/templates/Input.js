@@ -21,18 +21,31 @@ function Input({
           <label htmlFor={field.id} className="input-label">
             {field.label}
           </label>
-
-          <input
-            id={field.id}
-            className={`text-input ${error ? "input-error" : ""}`}
-            placeholder={field.placeholder}
-            type={field.type || "text"}
-            onChange={onChange}
-            readOnly={field.readOnly || false}
-            value={formData[field.id] || ""}
-            required={field.required || false}
-            {...props}
-          />
+          {field.type === "text-area" ? (
+            <textarea
+              id={field.id}
+              className={`text-area ${error ? "input-error" : ""}`}
+              placeholder={field.placeholder}
+              type={field.type || "text"}
+              onChange={onChange}
+              readOnly={field.readOnly || false}
+              value={formData[field.id] || ""}
+              required={field.required || false}
+              {...props}
+            />
+          ) : (
+            <input
+              id={field.id}
+              className={`text-input ${error ? "input-error" : ""}`}
+              placeholder={field.placeholder}
+              type={field.type || "text"}
+              onChange={onChange}
+              readOnly={field.readOnly || false}
+              value={formData[field.id] || ""}
+              required={field.required || false}
+              {...props}
+            />
+          )}
         </div>
       ))}
 

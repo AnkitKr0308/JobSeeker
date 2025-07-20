@@ -83,17 +83,27 @@ function AuthPage() {
     }
   };
 
-  const signup = async () => {
-    const result = await dispatch(signupUser(formData));
+const signup = async () => {
+  const signupResult = await dispatch(signupUser(formData));
+  const signupResponse = signupResult.payload;
 
-    const response = result.payload;
+  if (signupResponse.success) {
+    const loginResult = await dispatch(
+      loginUser({ username: formData.email, password: formData.password })
+    );
 
-    if (response.success) {
+    const loginResponse = loginResult.payload;
+
+    if (loginResponse.success) {
       navigate("/");
     } else {
-      setError(response?.msg);
+      setError("Signup successful but login failed.");
     }
-  };
+  } else {
+    setError(signupResponse?.msg || "Signup failed.");
+  }
+};
+
 
   useEffect(() => {
     if (user) {

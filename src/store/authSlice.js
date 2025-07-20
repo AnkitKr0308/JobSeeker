@@ -44,7 +44,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.msg;
+        state.error = action.error.message;
       })
       .addCase(signupUser.pending, (state) => {
         state.loading = true;
@@ -59,7 +59,7 @@ const authSlice = createSlice({
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.msg;
+        state.error = action.error.message;
       })
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;

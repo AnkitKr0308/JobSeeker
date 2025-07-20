@@ -7,7 +7,7 @@ import { logoutUser } from "../../store/authSlice";
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const user = useSelector((state)=>state.auth.data.user)
+  const user = useSelector((state)=>state.auth.data.result)
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
   const navigate=useNavigate()
   const dispatch=useDispatch()
