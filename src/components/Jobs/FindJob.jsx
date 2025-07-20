@@ -62,7 +62,7 @@ function FindJob() {
                 footer={
                   <>
                     <NavLink key="view" to="#">
-                      View More
+                      View Details
                     </NavLink>
                     <Button key="apply" label="Apply Now" />
                   </>

@@ -7,8 +7,6 @@ function Home() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.auth.data.result);
 
-  console.log(user);
-
   const navigateToAddJob = () => {
     navigate("/post-job");
   };
