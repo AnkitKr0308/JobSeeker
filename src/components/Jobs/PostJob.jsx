@@ -21,7 +21,11 @@ function PostJob() {
       type: "text-area",
     },
     { id: "skillsRequired", label: "Skills Required", required: true },
-    { id: "qualifications", label: "Qualifications", required: true },
+    { id: "qualifications", label: "Qualifications" },
+    { id: "role", label: "Job Role", required: true },
+    { id: "locations", label: "Locations" },
+    { id: "type", label: "Job Type" },
+    { id: "experience", label: "Experience" },
   ];
 
   const handleFormChange = async (e) => {
@@ -30,17 +34,19 @@ function PostJob() {
   };
 
   const handleJobSubmit = async () => {
-    try {
-      const jobdata = await dispatch(postJob(formData));
+    const jobdata = await dispatch(postJob(formData));
 
-      if (jobdata.payload?.success) {
-        setModalMessage(jobdata.payload.result.message);
+    if (jobdata.error) {
+      alert(jobdata.error.message || "Unknown error");
+      return;
+    }
 
-        setOpenModal(true);
-      }
+    if (jobdata.payload?.success) {
+      setModalMessage(jobdata.payload.result.message);
+      setOpenModal(true);
       setFormData({});
-    } catch (e) {
-      console.error("Error posting job", e);
+    } else {
+      alert(jobdata.payload?.message || "Failed to post job");
     }
   };
 
@@ -49,15 +55,13 @@ function PostJob() {
       <h2 className="postjob-title">Post a New Job</h2>
       <Input fields={fields} onChange={handleFormChange} formData={formData} />
 
-      
-     <div className="postbtn-wrapper">
-  <Button
-    className="btn btn-blue postbtn"
-    label="Post Job"
-    onClick={handleJobSubmit}
-  />
-</div>
-
+      <div className="postbtn-wrapper">
+        <Button
+          className="btn btn-blue postbtn"
+          label="Post Job"
+          onClick={handleJobSubmit}
+        />
+      </div>
 
       {openModal && (
         <Modal

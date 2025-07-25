@@ -5,14 +5,14 @@ import { useSelector } from "react-redux";
 
 function Home() {
   const navigate = useNavigate();
-  const user = useSelector((state) => state.auth.data.result);
+  const user = useSelector((state) => state.auth.data);
 
   const navigateToAddJob = () => {
     navigate("/post-job");
   };
 
   const navigateToSearchJob = () => {
-    navigate("/find-job");
+    navigate("/jobs");
   };
 
   const navigateToInterview = () => {};

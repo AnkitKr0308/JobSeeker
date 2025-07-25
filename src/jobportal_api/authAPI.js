@@ -23,6 +23,7 @@ export const fetchLogin = async (username, password) => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         email: username,
         password: password,
@@ -95,4 +96,29 @@ export const fetchUpdatePassword = async (formData) => {
   } catch (e) {
     console.error("Error updating password", e);
   }
+};
+
+export const fetchVerifySession = async () => {
+  try {
+    const response = await fetch(`${base_url}/Users/session`, {
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error("Session expired");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (e) {
+    console.error("Not able to verify session", e);
+  }
+};
+
+export const fetchLogout = async () => {
+  await fetch(`${base_url}/Users/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+  return null;
 };

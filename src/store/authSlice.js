@@ -1,9 +1,23 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   fetchLogin,
+  fetchLogout,
   fetchSignUp,
   fetchUpdatePassword,
+  fetchVerifySession,
 } from "../jobportal_api/authAPI";
+
+export const verifySession = createAsyncThunk(
+  "auth/verifySession",
+  async () => {
+    try {
+      const data = await fetchVerifySession();
+      return data;
+    } catch (error) {
+      throw new Error("Session expired");
+    }
+  }
+);
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -19,7 +33,7 @@ export const signupUser = createAsyncThunk("auth/signup", async (formData) => {
 });
 
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
-  localStorage.removeItem("user");
+  await fetchLogout;
 });
 
 export const updatePassword = createAsyncThunk(
@@ -30,15 +44,13 @@ export const updatePassword = createAsyncThunk(
   }
 );
 
-const savedUser = JSON.parse(localStorage.getItem("user"));
-
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     loading: false,
-    data: savedUser || null,
+    data: null,
     error: null,
-    status: savedUser?.success || false,
+    status: false,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -76,10 +88,11 @@ const authSlice = createSlice({
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;
       })
-      .addCase(logoutUser.fulfilled, (state, action) => {
+      .addCase(logoutUser.fulfilled, (state) => {
         state.loading = false;
-        state.data = {};
+        state.data = null;
         state.status = false;
+        state.error = null;
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
@@ -90,12 +103,24 @@ const authSlice = createSlice({
       })
       .addCase(updatePassword.fulfilled, (state, action) => {
         state.loading = false;
-        // state.data = action.payload;
         state.status = action.payload.success;
       })
       .addCase(updatePassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(verifySession.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(verifySession.fulfilled, (state, action) => {
+        state.loading = false;
+        state.status = true;
+        state.data = action.payload;
+      })
+      .addCase(verifySession.rejected, (state) => {
+        state.loading = false;
+        state.status = false;
+        state.data = null;
       });
   },
 });

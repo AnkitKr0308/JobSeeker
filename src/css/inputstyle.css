@@ -1,33 +1,28 @@
-/* Container wrapping all inputs vertically */
 .input-group {
   display: flex;
-  flex-direction: column; /* stack label-input rows vertically */
+  flex-direction: column;
   gap: 20px;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* Each label + input pair: side by side */
 .input-components {
   display: flex;
-  align-items: center; /* vertical center */
+  align-items: center;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* Label styling */
 .input-label {
   font-weight: 600;
   color: #0a2540;
-  /* remove fixed width */
+
   text-align: left;
-  /* optional: min-width for consistent spacing */
+
   min-width: 150px;
 }
 
-/* Text input styling */
 .text-input {
-  /* Push input to right */
   margin-left: auto;
   padding: 10px 12px;
   font-size: 16px;
@@ -36,16 +31,14 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   outline: none;
   box-sizing: border-box;
-  width: 300px; /* or max-width as needed */
+  width: 300px;
 }
 
-/* Focus state */
 .text-input:focus {
   border-color: #0a2540;
   box-shadow: 0 0 5px rgba(10, 37, 64, 0.4);
 }
 
-/* Textarea styling */
 .text-area {
   margin-left: auto;
   padding: 10px 12px;
@@ -56,16 +49,20 @@
   box-sizing: border-box;
   min-height: 80px;
   resize: vertical;
-  width: 300px; /* same width as input */
+  width: 300px;
 }
 
-/* Textarea focus */
+.text-area,
+.text-input {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
 .text-area:focus {
   border-color: #0a2540;
   box-shadow: 0 0 5px rgba(10, 37, 64, 0.4);
 }
 
-/* Error styling */
 .input-error {
   border-color: #e74c3c !important;
 }

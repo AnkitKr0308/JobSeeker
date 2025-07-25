@@ -2,19 +2,26 @@ import React, { useEffect, useState } from "react";
 import Card from "../templates/Card";
 import Button from "../templates/Button";
 import { findJob } from "../../store/jobSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import Input from "../templates/Input";
 import "../../css/card.css";
+import JobDetails from "./JobDetails";
 
 function FindJob() {
   const dispatch = useDispatch();
   const [jobs, SetJobs] = useState([]);
   const [searchValue, SetSearchValue] = useState("");
+  const [selectedJobId, setSelectedJobId] = useState(null);
+  const loading = useSelector((state) => state.job.loading);
 
   const handleSearchChange = (e) => {
     const { id, value } = e.target;
     SetSearchValue((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleViewDetails = (jobId) => {
+    setSelectedJobId((prevId) => (prevId === jobId ? null : jobId));
   };
 
   const fields = [
@@ -26,10 +33,9 @@ function FindJob() {
   ];
 
   useEffect(() => {
-    const fetchedJobs = async (e) => {
+    const fetchedJobs = async () => {
       try {
         const result = await dispatch(findJob(searchValue.searchbox || ""));
-
         SetJobs(
           Array.isArray(result.payload.fetchedjobdata)
             ? result.payload.fetchedjobdata
@@ -43,7 +49,7 @@ function FindJob() {
   }, [dispatch, searchValue]);
 
   return (
-    <>
+    <div className="findjob-container">
       <div className="searchbox">
         <Input
           fields={fields}
@@ -53,32 +59,53 @@ function FindJob() {
       </div>
       <div>
         {Array.isArray(jobs) && jobs.length > 0 ? (
-          jobs.map((job) => (
-            <div className="card-container" key={job.jobId}>
-              <Card
-                title={`Job No: ${job.jobId}`}
-                subtitle={`Title: ${job.title}`}
-                description={`Skills Required: ${job.skillsRequired}`}
-                footer={
-                  <>
-                    <NavLink key="view" to="#">
-                      View Details
-                    </NavLink>
-                    <Button key="apply" label="Apply Now" />
-                  </>
-                }
-              />
-            </div>
-          ))
+          jobs.map((job) => {
+            const isExpanded = selectedJobId === job.jobId;
+
+            return (
+              <div className="card-container" key={job.jobId}>
+                <Card
+                  isExpanded={isExpanded}
+                  title={
+                    isExpanded
+                      ? `Job Details: ${job.jobId}`
+                      : `Job No: ${job.jobId}`
+                  }
+                  subtitle={`Title: ${job.title}`}
+                  description={job.skillsRequired}
+                  footer={
+                    <>
+                      {isExpanded && (
+                        <div className="job-details-inside-card">
+                          <JobDetails jobid={job.jobId} />
+                        </div>
+                      )}
+                      <div className="card-footer-content">
+                        <NavLink
+                          onClick={() => handleViewDetails(job.jobId)}
+                          className="view-link"
+                        >
+                          {isExpanded ? "Hide Details" : "View Details"}
+                        </NavLink>
+                        <Button className="apply-button" label="Apply Now" />
+                      </div>
+                    </>
+                  }
+                />
+              </div>
+            );
+          })
         ) : (
           <div className="no-jobs-message">
-            {searchValue.searchbox?.trim()
+            {loading
+              ? "Loading..."
+              : searchValue.searchbox?.trim()
               ? `No jobs found for "${searchValue.searchbox}"`
               : "No jobs available at the moment."}
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

@@ -1,5 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchCreateJob, fetchFindJobs } from "../jobportal_api/jobsAPI";
+import {
+  fetchCreateJob,
+  fetchFindJobs,
+  fetchFindJobsByJobId,
+} from "../jobportal_api/jobsAPI";
 
 export const postJob = createAsyncThunk("jobs/postjob", async (formData) => {
   const job = await fetchCreateJob(formData);
@@ -10,6 +14,14 @@ export const findJob = createAsyncThunk("jobs/findjob", async (search) => {
   const jobdata = await fetchFindJobs(search);
   return jobdata;
 });
+
+export const getJobByJobID = createAsyncThunk(
+  "jobs/jobbyjobid",
+  async (jobid) => {
+    const jobdetails = await fetchFindJobsByJobId(jobid);
+    return jobdetails;
+  }
+);
 
 const jobSlice = createSlice({
   name: "job",
@@ -43,6 +55,18 @@ const jobSlice = createSlice({
         state.status = action.payload.success;
       })
       .addCase(findJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(getJobByJobID.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getJobByJobID.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+        state.status = action.payload.success;
+      })
+      .addCase(getJobByJobID.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

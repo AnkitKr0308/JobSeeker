@@ -145,7 +145,9 @@ function AuthPage() {
                   formData={formData}
                   error={error}
                 />
-                <Button type="submit" label="Login" fullwidth={true} />
+                <div style={{ marginBottom: "12px" }}>
+                  <Button type="submit" label="Login" fullwidth={true} />
+                </div>
                 <label>
                   Don't have an Account?{" "}
                   <Link to="/signup" className="text-blue underline">
