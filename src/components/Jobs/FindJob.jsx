@@ -49,7 +49,7 @@ function FindJob() {
   }, [dispatch, searchValue]);
 
   return (
-    <div className="findjob-container">
+    <div className="findjob-container" style={{ marginTop: "12px" }}>
       <div className="searchbox">
         <Input
           fields={fields}

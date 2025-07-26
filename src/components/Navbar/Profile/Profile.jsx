@@ -10,10 +10,9 @@ import { useNavigate } from "react-router-dom";
 function Profile() {
   const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.data.result);
+  const user = useSelector((state) => state.auth.data);
 
   const navigate = useNavigate();
-  // const [openModal, setOpenModal] = useState(false);
 
   const profileFields = [
     { id: "userId", name: "userId", label: "User ID", readOnly: true },
@@ -32,11 +31,11 @@ function Profile() {
     const loadUserProfile = async () => {
       if (!user?.userId) return;
 
-      const profileData = await dispatch(userProfile(user.userId));
-      const dataArray = profileData?.payload?.profiledata?.data;
+      const profile = await dispatch(userProfile(user.userId));
+      const profiledata = profile?.payload?.profiledata;
 
-      if (Array.isArray(dataArray) && dataArray.length > 0) {
-        setFormData(dataArray[0]);
+      if (profiledata) {
+        setFormData(profiledata);
       } else {
         setFormData({});
       }

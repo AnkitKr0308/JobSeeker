@@ -17,10 +17,12 @@ function Home() {
 
   const navigateToInterview = () => {};
 
+  if (!user) return null;
+
   return (
     <div>
       <span className="imgbtn">
-        {(user.role === "Admin" || user.role === "Employer") && (
+        {user && (user.role === "Admin" || user.role === "Employer") && (
           <div className="img-item">
             <img
               src="/addjob.png"

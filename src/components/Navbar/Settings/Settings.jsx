@@ -3,7 +3,7 @@ import "../../../css/homestyle.css";
 import { useSelector } from "react-redux";
 
 function Home() {
-  const user = useSelector((state) => state.auth.data.result);
+  const user = useSelector((state) => state.auth.data);
 
   const navigateToManageUsers = () => {};
 

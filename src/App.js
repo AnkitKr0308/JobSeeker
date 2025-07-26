@@ -1,16 +1,23 @@
-import "./css/App.css";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { verifySession } from "./store/authSlice";
 import Navbar from "./components/Navbar/Navbar";
 import { Outlet } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { verifySession } from "./store/authSlice";
+
+let hasVerifiedSession = false;
 
 function App() {
   const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(verifySession());
-  }, [dispatch]);
+    if (!hasVerifiedSession && !auth.data) {
+      dispatch(verifySession());
+      hasVerifiedSession = true;
+    }
+  }, [dispatch, auth.data]);
+
+  if (auth.loading) return null;
 
   return (
     <div className="App">

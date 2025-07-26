@@ -8,10 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { userProfile } from "../../../store/userSlice";
 
 function ChangePassword() {
-  const userprofile = useSelector(
-    (state) => state.user.data?.profiledata?.data?.[0]
-  );
-  const userId = useSelector((state) => state.auth.data.result.userId);
+  const userprofile = useSelector((state) => state.user.data.profiledata);
+  const userId = useSelector((state) => state.auth.data.userId);
   const [openModal, setOpenModal] = useState(true);
   const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
@@ -37,7 +35,7 @@ function ChangePassword() {
     try {
       const update = await dispatch(updatePassword(formData));
 
-      if (update.payload?.success) {
+      if (update.payload.message === "Password updated successfully") {
         await dispatch(userProfile(userId));
 
         alert("Password updated successfully");

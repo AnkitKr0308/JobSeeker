@@ -29,21 +29,17 @@ export const fetchLogin = async (username, password) => {
         password: password,
       }),
     });
+
     const result = await response.json();
+
     if (response.ok) {
-      localStorage.setItem("user", JSON.stringify(result));
-      return { success: true, result };
-    } else if (result.message === "User not found") {
-      return { success: false, msg: result.message };
-    } else if (result.message === "Invalid password") {
-      return { success: false, msg: result.message };
+      return { success: true, data: result };
     } else {
-      alert("Login failed. Please try again later.");
-      return { success: false };
+      return { success: false, message: result.message || "Login failed" };
     }
   } catch (e) {
-    console.error("Error logging user:", e);
-    alert("Something went wrong. Please try again later.");
+    console.error("Error logging in:", e);
+    return { success: false, message: "Network error" };
   }
 };
 
@@ -54,22 +50,17 @@ export const fetchSignUp = async (data) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
+
     const result = await response.json();
+
     if (response.ok) {
-      localStorage.setItem("user", JSON.stringify(result));
-      return { success: true, result };
-    } else if (result.message === "User with this email already exists") {
-      return { success: false, msg: result.message };
-    } else if (result.message === "Please enter correct email address") {
-      const msg = result.message;
-      return { success: false, msg };
+      return result;
     } else {
-      alert("Error creating the account");
-      return { success: false };
+      return null;
     }
   } catch (e) {
-    console.error("Error registering user account", e);
-    alert("Something went wrong. Please try again later.");
+    console.error("Error signing up:", e);
+    return null;
   }
 };
 
@@ -79,22 +70,16 @@ export const fetchUpdatePassword = async (formData) => {
       `${base_url}/Users/updatepassword/${formData.email}`,
       {
         method: "PUT",
-        headers: {
-          "content-type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       }
     );
 
     const result = await response.json();
-
-    if (response.ok) {
-      return { success: true, result };
-    } else {
-      return { success: false, message: "Failed to update password" };
-    }
+    return response.ok ? result : null;
   } catch (e) {
-    console.error("Error updating password", e);
+    console.error("Error updating password:", e);
+    return null;
   }
 };
 
@@ -104,14 +89,16 @@ export const fetchVerifySession = async () => {
       credentials: "include",
     });
 
-    if (!response.ok) {
-      throw new Error("Session expired");
+    const result = await response.json();
+
+    if (!response.ok || !result?.userId) {
+      throw new Error("Invalid session");
     }
 
-    const data = await response.json();
-    return data;
+    return result;
   } catch (e) {
-    console.error("Not able to verify session", e);
+    console.error("Session verification failed:", e);
+    return null;
   }
 };
 

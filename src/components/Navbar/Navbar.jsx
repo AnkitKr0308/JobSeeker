@@ -11,8 +11,7 @@ function Navbar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const dropdownRef = useRef(null);
-
-  console.log(user);
+  const loading = useSelector((state) => state.auth.loading);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -22,6 +21,10 @@ function Navbar() {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const navigateToProfile = () => {
@@ -37,25 +40,28 @@ function Navbar() {
     navigate("/login");
   };
 
+  if (loading) return null;
+
   return (
     <nav className="navbar">
       <div className="navbar-brand" onClick={() => navigate("/")}>
         JobSeeker
       </div>
+      {user && (
+        <div className="navbar-user" onClick={toggleDropdown} ref={dropdownRef}>
+          <span className="greeting">Hello, {user.name}</span>
+          <span className="profile-icon">👤</span>
 
-      <div className="navbar-user" onClick={toggleDropdown} ref={dropdownRef}>
-        <span className="greeting">Hello, {user.name}</span>
-        <span className="profile-icon">👤</span>
-
-        {isDropdownOpen && (
-          <div className="dropdown-menu">
-            <button onClick={navigateToProfile}>My Profile</button>
-            <button onClick={navigateToSettings}>Settings</button>
-            <hr />
-            <button onClick={logout}>Logout</button>
-          </div>
-        )}
-      </div>
+          {isDropdownOpen && (
+            <div className="dropdown-menu">
+              <button onClick={navigateToProfile}>My Profile</button>
+              <button onClick={navigateToSettings}>Settings</button>
+              <hr />
+              <button onClick={logout}>Logout</button>
+            </div>
+          )}
+        </div>
+      )}
     </nav>
   );
 }

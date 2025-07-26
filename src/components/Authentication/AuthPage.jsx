@@ -67,6 +67,7 @@ function AuthPage() {
   const handleChange = async (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
+    setError("");
   };
 
   const login = async () => {
@@ -76,10 +77,10 @@ function AuthPage() {
 
     const response = result.payload;
 
-    if (response.success) {
+    if (response?.success) {
       navigate("/");
     } else {
-      setError(response?.msg);
+      setError(response?.message || "Login failed");
     }
   };
 
@@ -87,14 +88,14 @@ function AuthPage() {
     const signupResult = await dispatch(signupUser(formData));
     const signupResponse = signupResult.payload;
 
-    if (signupResponse.success) {
+    if (signupResponse?.success) {
       const loginResult = await dispatch(
         loginUser({ username: formData.email, password: formData.password })
       );
 
       const loginResponse = loginResult.payload;
 
-      if (loginResponse.success) {
+      if (loginResponse?.success) {
         navigate("/");
       } else {
         setError("Signup successful but login failed.");
