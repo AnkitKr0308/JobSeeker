@@ -101,7 +101,7 @@ function AuthPage() {
         setError("Signup successful but login failed.");
       }
     } else {
-      setError(signupResponse?.msg || "Signup failed.");
+      setError(signupResponse?.message || "Signup failed.");
     }
   };
 

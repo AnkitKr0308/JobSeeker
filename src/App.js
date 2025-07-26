@@ -1,19 +1,18 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { verifySession } from "./store/authSlice";
 import Navbar from "./components/Navbar/Navbar";
 import { Outlet } from "react-router-dom";
 
-let hasVerifiedSession = false;
-
 function App() {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
+  const hasVerifiedSession = useRef(false);
 
   useEffect(() => {
-    if (!hasVerifiedSession && !auth.data) {
+    if (!hasVerifiedSession.current && !auth.data) {
       dispatch(verifySession());
-      hasVerifiedSession = true;
+      hasVerifiedSession.current = true;
     }
   }, [dispatch, auth.data]);
 

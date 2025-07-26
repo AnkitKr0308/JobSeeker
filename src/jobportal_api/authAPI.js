@@ -16,6 +16,25 @@ export const fetchRoles = async () => {
   }
 };
 
+export const fetchVerifySession = async () => {
+  try {
+    const response = await fetch(`${base_url}/Users/session`, {
+      credentials: "include",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.userId) {
+      return { success: false };
+    }
+
+    return { success: true, result };
+  } catch (e) {
+    console.error("Session verification failed:", e);
+    return { success: false };
+  }
+};
+
 export const fetchLogin = async (username, password) => {
   try {
     const response = await fetch(`${base_url}/Users/login`, {
@@ -79,25 +98,6 @@ export const fetchUpdatePassword = async (formData) => {
     return response.ok ? result : null;
   } catch (e) {
     console.error("Error updating password:", e);
-    return null;
-  }
-};
-
-export const fetchVerifySession = async () => {
-  try {
-    const response = await fetch(`${base_url}/Users/session`, {
-      credentials: "include",
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || !result?.userId) {
-      throw new Error("Invalid session");
-    }
-
-    return result;
-  } catch (e) {
-    console.error("Session verification failed:", e);
     return null;
   }
 };

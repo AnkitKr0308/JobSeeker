@@ -7,6 +7,8 @@ import { NavLink } from "react-router-dom";
 import Input from "../templates/Input";
 import "../../css/card.css";
 import JobDetails from "./JobDetails";
+import Slider from "../templates/Slider";
+import ApplyJob from "./ApplyJob";
 
 function FindJob() {
   const dispatch = useDispatch();
@@ -14,6 +16,13 @@ function FindJob() {
   const [searchValue, SetSearchValue] = useState("");
   const [selectedJobId, setSelectedJobId] = useState(null);
   const loading = useSelector((state) => state.job.loading);
+  const [openSlider, setOpenSlider] = useState(false);
+  const [formResetKey, setFormResetKey] = useState(0);
+
+  const handleCloseSlider = () => {
+    setOpenSlider(false);
+    setFormResetKey((prev) => prev + 1); 
+  };
 
   const handleSearchChange = (e) => {
     const { id, value } = e.target;
@@ -47,6 +56,11 @@ function FindJob() {
     };
     fetchedJobs();
   }, [dispatch, searchValue]);
+
+  const handleApplyNow = (jobId) => {
+    setSelectedJobId(jobId);
+    setOpenSlider(true);
+  };
 
   return (
     <div className="findjob-container" style={{ marginTop: "12px" }}>
@@ -87,7 +101,11 @@ function FindJob() {
                         >
                           {isExpanded ? "Hide Details" : "View Details"}
                         </NavLink>
-                        <Button className="apply-button" label="Apply Now" />
+                        <Button
+                          className="apply-button"
+                          label="Apply Now"
+                          onClick={() => handleApplyNow(job.jobId)}
+                        />
                       </div>
                     </>
                   }
@@ -105,6 +123,19 @@ function FindJob() {
           </div>
         )}
       </div>
+      {
+        <Slider
+          isOpen={openSlider}
+          title="Apply Job"
+          onClose={handleCloseSlider}
+        >
+          <ApplyJob
+            key={formResetKey}
+            jobId={selectedJobId}
+            onSuccess={handleCloseSlider}
+          />
+        </Slider>
+      }
     </div>
   );
 }

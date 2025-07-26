@@ -14,6 +14,8 @@ function PostJob() {
 
   const fields = [
     { id: "title", label: "Title", required: true },
+    { id: "role", label: "Job Role", required: true },
+    { id: "experience", label: "Experience" },
     {
       id: "description",
       label: "Description",
@@ -22,10 +24,9 @@ function PostJob() {
     },
     { id: "skillsRequired", label: "Skills Required", required: true },
     { id: "qualifications", label: "Qualifications" },
-    { id: "role", label: "Job Role", required: true },
+
     { id: "locations", label: "Locations" },
     { id: "type", label: "Job Type" },
-    { id: "experience", label: "Experience" },
   ];
 
   const handleFormChange = async (e) => {

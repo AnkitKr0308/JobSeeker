@@ -7,12 +7,12 @@ export const fetchCreateJob = async (data) => {
     const response = await fetch(`${base_url}/createjob`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include", 
+      credentials: "include",
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      let errorText = await response.text(); 
+      let errorText = await response.text();
       try {
         const errorJson = JSON.parse(errorText);
         throw new Error(errorJson.message || "Error posting job");
@@ -61,5 +61,28 @@ export const fetchFindJobsByJobId = async (jobid) => {
     }
   } catch (e) {
     console.error("Error getting job details", e);
+  }
+};
+
+export const fetchApplyJob = async (data) => {
+  try {
+    const response = await fetch(`${base_url}/applyjob`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+
+    if (response) {
+      return result;
+    } else {
+      return { success: false, message: "Error applying for job" };
+    }
+  } catch (e) {
+    console.error("Failed to apply for job", e);
   }
 };

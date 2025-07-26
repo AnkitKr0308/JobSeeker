@@ -7,36 +7,34 @@ import {
   fetchVerifySession,
 } from "../jobportal_api/authAPI";
 
-// Thunks
-
 export const verifySession = createAsyncThunk(
   "auth/verifySession",
   async () => {
-    try {
-      const response = await fetchVerifySession(); // must return { success: true, result: {...} }
-      if (response.success && response.result) {
-        return response.result;
-      }
-      return null;
-    } catch (error) {
-      return null;
+    const response = await fetchVerifySession();
+    if (response.success && response.result) {
+      return response.result;
     }
+    return null;
   }
 );
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ username, password }) => {
-    const user = await fetchLogin(username, password);
-    return user;
+    const response = await fetchLogin(username, password);
+    return response;
   }
 );
 
 export const signupUser = createAsyncThunk(
   "auth/signupUser",
   async (formData) => {
-    const user = await fetchSignUp(formData);
-    return user;
+    const response = await fetchSignUp(formData);
+
+    if (response && response.success) {
+      return { success: true, data: response };
+    }
+    return { success: false };
   }
 );
 
@@ -72,7 +70,6 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-
         if (action.payload?.success && action.payload.data?.userId) {
           state.data = action.payload.data;
           state.status = true;
@@ -81,6 +78,7 @@ const authSlice = createSlice({
           state.data = null;
           state.status = false;
           state.error = action.payload?.message || "Login failed";
+          localStorage.removeItem("user");
         }
       })
 
@@ -90,18 +88,20 @@ const authSlice = createSlice({
       })
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload?.userId) {
-          state.data = action.payload;
+        if (action.payload?.success && action.payload.data?.userId) {
+          state.data = action.payload.data;
           state.status = true;
-          localStorage.setItem("user", JSON.stringify(action.payload));
+          localStorage.setItem("user", JSON.stringify(action.payload.data));
         } else {
           state.data = null;
           state.status = false;
+          localStorage.removeItem("user");
         }
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+        localStorage.removeItem("user");
       })
 
       // LOGOUT
@@ -141,6 +141,7 @@ const authSlice = createSlice({
         const user = action.payload;
 
         if (!user) {
+          // Clear user data if session invalid or expired
           state.status = false;
           state.data = null;
           localStorage.removeItem("user");
@@ -153,19 +154,14 @@ const authSlice = createSlice({
           currentUser?.name === user.name &&
           currentUser?.role === user.role;
 
-        console.log("Redux before update:", currentUser);
-        console.log("Fetched user:", user);
-        console.log("isSameUser:", isSameUser);
-
         if (!isSameUser) {
           state.data = user;
           state.status = true;
           localStorage.setItem("user", JSON.stringify(user));
-        } else {
-          console.log("No change, skipping state update");
         }
       })
       .addCase(verifySession.rejected, (state) => {
+        // On error verifying session, clear user data
         state.loading = false;
         state.status = false;
         state.data = null;
