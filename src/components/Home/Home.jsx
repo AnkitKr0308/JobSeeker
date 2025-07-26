@@ -17,6 +17,10 @@ function Home() {
 
   const navigateToInterview = () => {};
 
+  const navigateToAppliedJob = () => {
+    navigate("/appliedjobs");
+  };
+
   if (!user) return null;
 
   return (
@@ -42,6 +46,15 @@ function Home() {
             title="Search Job"
           />
           <p>Search Job</p>
+        </div>
+        <div className="img-item">
+          <img
+            src="/appliedjob.png"
+            alt="Applied Jobs"
+            onClick={navigateToAppliedJob}
+            title="Applied Jobs"
+          />
+          <p>Applied Jobs</p>
         </div>
         <div className="img-item">
           <img

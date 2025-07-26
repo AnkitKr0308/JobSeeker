@@ -15,6 +15,7 @@ import Unauthorized from "./components/Authentication/Unauthorized";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import ChangePassword from "./components/Navbar/Profile/ChangePassword";
+import AppliedJobsPage from "./pages/AppliedJobsPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: "/changepassword",
         element: <ChangePassword />,
+      },
+      {
+        path: "/appliedjobs",
+        element: <AppliedJobsPage />,
       },
     ],
   },

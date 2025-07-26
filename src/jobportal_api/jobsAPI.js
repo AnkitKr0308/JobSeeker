@@ -76,7 +76,6 @@ export const fetchApplyJob = async (data) => {
     });
 
     const result = await response.json();
-
     if (response) {
       return result;
     } else {
@@ -84,5 +83,25 @@ export const fetchApplyJob = async (data) => {
     }
   } catch (e) {
     console.error("Failed to apply for job", e);
+  }
+};
+
+export const fetchAppliedJobs = async () => {
+  try {
+    const response = await fetch(`${base_url}/jobsapplied`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const result = await response.json();
+
+    if (response) {
+      return result;
+    }
+  } catch (e) {
+    console.error("Error fetching jobs: Internal Server Error", e);
   }
 };

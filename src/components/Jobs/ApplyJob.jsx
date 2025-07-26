@@ -3,11 +3,14 @@ import Input from "../templates/Input";
 import Button from "../templates/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { applyJob } from "../../store/jobSlice";
+import Modal from "../templates/Modal";
 
 function ApplyJob({ jobId, onSuccess }) {
   const user = useSelector((state) => state.auth.data);
   const [formData, SetFormData] = useState("");
   const dispatch = useDispatch();
+  const [modalData, setModalData] = useState("");
+  const [openModal, setOpenModal] = useState(false);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -35,10 +38,22 @@ function ApplyJob({ jobId, onSuccess }) {
     const res = await dispatch(applyJob(payload));
 
     if (res.payload.success) {
-      alert(`Applied for ${jobId} successfully`);
-      SetFormData("");
-      if (onSuccess) onSuccess();
+      setOpenModal(true);
+      setModalData(`Applied for ${jobId} successfully`);
+    } else if (
+      res.payload.message === "You have already applied for this job"
+    ) {
+      setOpenModal(true);
+      setModalData(res.payload.message);
+    } else {
+      alert(res.payload.message);
     }
+  };
+
+  const closeModal = () => {
+    SetFormData("");
+    setOpenModal(false);
+    if (onSuccess) onSuccess();
   };
 
   const fields = [
@@ -52,6 +67,11 @@ function ApplyJob({ jobId, onSuccess }) {
       <div>
         <Button label="Apply" onClick={handleApplyClick} />
       </div>
+      {openModal && (
+        <Modal isOpen={openModal} onClose={closeModal} message={modalData}>
+          <Button label="OK" onClick={closeModal} />
+        </Modal>
+      )}
     </div>
   );
 }

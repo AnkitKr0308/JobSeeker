@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  fetchAppliedJobs,
   fetchApplyJob,
   fetchCreateJob,
   fetchFindJobs,
@@ -26,6 +27,11 @@ export const getJobByJobID = createAsyncThunk(
 
 export const applyJob = createAsyncThunk("jobs/applyjob", async (data) => {
   const res = await fetchApplyJob(data);
+  return res;
+});
+
+export const appliedJobs = createAsyncThunk("jobs/appliedjobs", async () => {
+  const res = await fetchAppliedJobs();
   return res;
 });
 
@@ -85,6 +91,18 @@ const jobSlice = createSlice({
         state.status = action.payload.success;
       })
       .addCase(applyJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(appliedJobs.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(appliedJobs.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+        state.status = action.payload.success;
+      })
+      .addCase(appliedJobs.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

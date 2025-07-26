@@ -1,53 +1,42 @@
 import React, { useEffect, useState } from "react";
 import Card from "../templates/Card";
-import Button from "../templates/Button";
-import { findJob } from "../../store/jobSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
 import Input from "../templates/Input";
-import "../../css/card.css";
+import { useDispatch, useSelector } from "react-redux";
+import { appliedJobs } from "../../store/jobSlice";
 import JobDetails from "./JobDetails";
-import Slider from "../templates/Slider";
-import ApplyJob from "./ApplyJob";
+import { NavLink } from "react-router-dom";
 
-function FindJob() {
-  const dispatch = useDispatch();
-  const [jobs, SetJobs] = useState([]);
+function AppliedJobs() {
   const [searchValue, SetSearchValue] = useState("");
+  const [jobs, SetJobs] = useState([]);
+  const dispatch = useDispatch();
   const [selectedJobId, setSelectedJobId] = useState(null);
   const loading = useSelector((state) => state.job.loading);
-  const [openSlider, setOpenSlider] = useState(false);
-  const [formResetKey, setFormResetKey] = useState(0);
-
-  const handleCloseSlider = () => {
-    setOpenSlider(false);
-    setFormResetKey((prev) => prev + 1);
-  };
 
   const handleSearchChange = (e) => {
     const { id, value } = e.target;
     SetSearchValue((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleViewDetails = (jobId) => {
-    setSelectedJobId((prevId) => (prevId === jobId ? null : jobId));
-  };
-
   const fields = [
     {
       id: "searchbox",
-      placeholder: "Type here to search jobs...",
+      placeholder: "Search here...",
       type: "text",
     },
   ];
 
+  const handleViewDetails = (jobId) => {
+    setSelectedJobId((prevId) => (prevId === jobId ? null : jobId));
+  };
+
   useEffect(() => {
     const fetchedJobs = async () => {
       try {
-        const result = await dispatch(findJob());
+        const result = await dispatch(appliedJobs(searchValue.searchbox || ""));
 
-        const allJobs = Array.isArray(result.payload.fetchedjobdata)
-          ? result.payload.fetchedjobdata
+        const allJobs = Array.isArray(result.payload.appliedjobs)
+          ? result.payload.appliedjobs
           : [];
 
         const filteredJobs = allJobs.filter((job) =>
@@ -63,11 +52,6 @@ function FindJob() {
     };
     fetchedJobs();
   }, [dispatch, searchValue]);
-
-  const handleApplyNow = (jobId) => {
-    setSelectedJobId(jobId);
-    setOpenSlider(true);
-  };
 
   return (
     <div className="findjob-container" style={{ marginTop: "12px" }}>
@@ -108,11 +92,6 @@ function FindJob() {
                         >
                           {isExpanded ? "Hide Details" : "View Details"}
                         </NavLink>
-                        <Button
-                          className="apply-button"
-                          label="Apply Now"
-                          onClick={() => handleApplyNow(job.jobId)}
-                        />
                       </div>
                     </>
                   }
@@ -130,21 +109,8 @@ function FindJob() {
           </div>
         )}
       </div>
-      {
-        <Slider
-          isOpen={openSlider}
-          title="Apply Job"
-          onClose={handleCloseSlider}
-        >
-          <ApplyJob
-            key={formResetKey}
-            jobId={selectedJobId}
-            onSuccess={handleCloseSlider}
-          />
-        </Slider>
-      }
     </div>
   );
 }
 
-export default FindJob;
+export default AppliedJobs;
