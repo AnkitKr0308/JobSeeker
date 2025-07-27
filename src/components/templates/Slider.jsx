@@ -3,12 +3,23 @@ import "../../css/slider.css";
 
 const Slider = forwardRef(({ isOpen, onClose, children, title }, ref) => {
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "auto";
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
   }, [isOpen]);
 
   return (
     <div className={`slider-overlay ${isOpen ? "open" : ""}`}>
-      <div className="slider-panel" ref={ref}>
+      <div
+        className={`slider-panel ${isOpen ? "slide-in" : "slide-out"}`}
+        ref={ref}
+      >
         <div className="slider-header">
           {title && <h3 className="slider-title">{title}</h3>}
           <button className="close-btn" onClick={onClose}>

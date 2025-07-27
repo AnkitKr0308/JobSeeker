@@ -105,3 +105,16 @@ export const fetchAppliedJobs = async () => {
     console.error("Error fetching jobs: Internal Server Error", e);
   }
 };
+
+export const fetchGetApplications = async () => {
+  try {
+    const response = await fetch(`${base_url}/applications`);
+    const result = await response.json();
+
+    if (response) {
+      return result;
+    }
+  } catch (e) {
+    console.error("Error fetching applications: ", e);
+  }
+};

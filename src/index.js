@@ -16,6 +16,7 @@ import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import ChangePassword from "./components/Navbar/Profile/ChangePassword";
 import AppliedJobsPage from "./pages/AppliedJobsPage";
+import ApplicationsPage from "./pages/ApplicationsPage";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -70,7 +71,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/appliedjobs",
-        element: <AppliedJobsPage />,
+        element: (
+          <ProtectedRoute allowedRoles={["Admin", "Employee"]}>
+            <AppliedJobsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/applications",
+        element: (
+          <ProtectedRoute allowedRoles={["Admin", "Employer"]}>
+            <ApplicationsPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

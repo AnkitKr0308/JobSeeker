@@ -1,39 +1,70 @@
-/* src/css/slider.css */
+/* slider.css */
 
 .slider-overlay {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 100%;
+  inset: 0;
   background: rgba(0, 0, 0, 0.4);
   z-index: 1000;
-  transition: left 0.3s ease-in-out;
-  overflow: hidden;
+  display: flex;
+  justify-content: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .slider-overlay.open {
-  left: 0;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .slider-panel {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 40vw;
-  height: 100%;
+  width: 60vw;
+  max-width: 800px;
+  height: 100vh;
   background: white;
-  padding: 20px;
+  padding: 24px;
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.4s ease-in-out;
+}
+
+.slider-panel.slide-in {
+  transform: translateX(0);
+}
+
+.slider-panel.slide-out {
+  transform: translateX(100%);
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.slider-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: #0a2540;
 }
 
 .close-btn {
-  position: absolute;
-  top: 10px;
-  right: 16px;
   font-size: 18px;
   background: none;
   border: none;
   cursor: pointer;
+  padding: 6px 10px;
+}
+
+.slider-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

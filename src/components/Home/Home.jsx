@@ -21,6 +21,10 @@ function Home() {
     navigate("/appliedjobs");
   };
 
+  const navigateToApplications = () => {
+    navigate("/applications");
+  };
+
   if (!user) return null;
 
   return (
@@ -47,15 +51,31 @@ function Home() {
           />
           <p>Search Job</p>
         </div>
-        <div className="img-item">
-          <img
-            src="/appliedjob.png"
-            alt="Applied Jobs"
-            onClick={navigateToAppliedJob}
-            title="Applied Jobs"
-          />
-          <p>Applied Jobs</p>
-        </div>
+        {user && (user.role === "Admin" || user.role === "Employee") && (
+          <div className="img-item">
+            <img
+              src="/appliedjob.png"
+              alt="Applied Jobs"
+              onClick={navigateToAppliedJob}
+              title="Applied Jobs"
+            />
+
+            <p>Applied Jobs</p>
+          </div>
+        )}
+
+        {user && (user.role === "Admin" || user.role === "Employer") && (
+          <div className="img-item">
+            <img
+              src="/applications.png"
+              alt="Applications"
+              onClick={navigateToApplications}
+              title="Applications"
+            />
+            <p>Applications</p>
+          </div>
+        )}
+
         <div className="img-item">
           <img
             src="/interview.png"

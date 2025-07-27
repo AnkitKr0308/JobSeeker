@@ -18,3 +18,18 @@ export const fetchUserProfile = async (userId) => {
     return { success: false, message: "Network error or server is down" };
   }
 };
+
+export const fetchProfiles = async () => {
+  try {
+    const response = await fetch(`${base_url}/userprofile`);
+
+    const result = await response.json();
+
+    if (response) {
+      return result;
+    }
+  } catch (e) {
+    console.error("Error fetching profile", e);
+    return { success: false, message: "Network error or server is down" };
+  }
+};

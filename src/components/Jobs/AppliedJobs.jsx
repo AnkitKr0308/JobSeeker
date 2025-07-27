@@ -105,7 +105,7 @@ function AppliedJobs() {
               ? "Loading..."
               : searchValue.searchbox?.trim()
               ? `No jobs found for "${searchValue.searchbox}"`
-              : "No jobs available at the moment."}
+              : "You haven't applied for any jobs yet."}
           </div>
         )}
       </div>

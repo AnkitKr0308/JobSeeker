@@ -5,6 +5,7 @@ import {
   fetchCreateJob,
   fetchFindJobs,
   fetchFindJobsByJobId,
+  fetchGetApplications,
 } from "../jobportal_api/jobsAPI";
 
 export const postJob = createAsyncThunk("jobs/postjob", async (formData) => {
@@ -32,6 +33,11 @@ export const applyJob = createAsyncThunk("jobs/applyjob", async (data) => {
 
 export const appliedJobs = createAsyncThunk("jobs/appliedjobs", async () => {
   const res = await fetchAppliedJobs();
+  return res;
+});
+
+export const applications = createAsyncThunk("jobs/applications", async () => {
+  const res = await fetchGetApplications();
   return res;
 });
 
@@ -103,6 +109,18 @@ const jobSlice = createSlice({
         state.status = action.payload.success;
       })
       .addCase(appliedJobs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(applications.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(applications.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+        state.status = action.payload.success;
+      })
+      .addCase(applications.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });
