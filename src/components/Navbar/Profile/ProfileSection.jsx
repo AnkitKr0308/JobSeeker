@@ -3,15 +3,12 @@ import Input from "../../templates/Input";
 import { useDispatch, useSelector } from "react-redux";
 import { userProfile } from "../../../store/userSlice";
 import "../../../css/profilestyle.css";
-import Button from "../../templates/Button";
 import "../../../css/buttonstyle.css";
-import { useNavigate } from "react-router-dom";
 
 function ProfileSection({ userId }) {
   const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.auth.data);
-  const [isOwnProfile, setIsOwnProfile] = useState(false);
 
   const targetUserId = userId || loggedInUser?.userId;
 
@@ -32,7 +29,6 @@ function ProfileSection({ userId }) {
       const profile = await dispatch(userProfile(targetUserId));
       if (profile?.payload?.success) {
         setFormData(profile.payload.profiledata.profiledata);
-        setIsOwnProfile(targetUserId === loggedInUser?.userId);
       }
     };
     loadProfile();
@@ -40,16 +36,8 @@ function ProfileSection({ userId }) {
 
   return (
     <div className="profile-container">
-      {/* <h2 className="profile-title">
-        {isOwnProfile ? "My Profile" : "User Profile"}
-      </h2> */}
       <div className="profile-card">
         <Input fields={profileFields} formData={formData} />
-        {/* {isOwnProfile && (
-          <div className="btn">
-            <Button label="Change Password" onClick={openChangePasswordModal} />
-          </div>
-        )} */}
       </div>
     </div>
   );

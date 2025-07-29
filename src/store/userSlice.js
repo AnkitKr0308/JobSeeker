@@ -11,8 +11,6 @@ export const profiles = createAsyncThunk("user/userprofile", async () => {
   return res;
 });
 
-// const savedUser = JSON.parse(localStorage.getItem("userData"));
-
 const userSlice = createSlice({
   name: "user",
   initialState: {

@@ -3,17 +3,12 @@ import Input from "../../templates/Input";
 import { useDispatch, useSelector } from "react-redux";
 import { userProfile } from "../../../store/userSlice";
 import "../../../css/profilestyle.css";
-import Button from "../../templates/Button";
 import "../../../css/buttonstyle.css";
-import { useNavigate } from "react-router-dom";
 
 function WorkExSection({ userId }) {
   const [formData, setFormData] = useState({});
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.auth.data);
-  const [isOwnProfile, setIsOwnProfile] = useState(false);
-
-  const navigate = useNavigate();
 
   const targetUserId = userId || loggedInUser?.userId;
 
@@ -23,27 +18,6 @@ function WorkExSection({ userId }) {
     { id: "toDate", label: "To", readOnly: true },
   ];
 
-  //   const openChangePasswordModal = () => {
-  //     navigate("/changepassword");
-  //   };
-
-  // useEffect(() => {
-  //   const loadUserProfile = async () => {
-  //     if (!user?.userId) return;
-
-  //     const profile = await dispatch(userProfile(user.userId));
-  //     const profiledata = profile?.payload?.profiledata;
-
-  //     if (profiledata) {
-  //       setFormData(profiledata);
-  //     } else {
-  //       setFormData({});
-  //     }
-  //   };
-
-  //   loadUserProfile();
-  // }, [dispatch, user?.userId]);
-
   useEffect(() => {
     const loadProfile = async () => {
       if (!targetUserId) return;
@@ -51,7 +25,6 @@ function WorkExSection({ userId }) {
       if (res?.payload?.success) {
         const workex = res.payload.profiledata.profiledata.projects;
         setFormData(workex || []);
-        setIsOwnProfile(targetUserId === loggedInUser?.userId);
       }
     };
     loadProfile();
