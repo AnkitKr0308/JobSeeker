@@ -46,6 +46,7 @@ function AppliedJobs() {
         );
 
         SetJobs(filteredJobs);
+        console.log(filteredJobs);
       } catch (e) {
         console.error("Error fetching jobs", e);
       }
@@ -65,10 +66,10 @@ function AppliedJobs() {
       <div>
         {Array.isArray(jobs) && jobs.length > 0 ? (
           jobs.map((job) => {
-            const isExpanded = selectedJobId === job.jobId;
+            const isExpanded = selectedJobId === job.id;
 
             return (
-              <div className="card-container" key={job.jobId}>
+              <div className="card-container" key={job.id}>
                 <Card
                   isExpanded={isExpanded}
                   title={
@@ -87,7 +88,7 @@ function AppliedJobs() {
                       )}
                       <div className="card-footer-content">
                         <NavLink
-                          onClick={() => handleViewDetails(job.jobId)}
+                          onClick={() => handleViewDetails(job.id)}
                           className="view-link"
                         >
                           {isExpanded ? "Hide Details" : "View Details"}
