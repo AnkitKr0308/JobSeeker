@@ -1,43 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Input from "../../templates/Input";
-import { useDispatch, useSelector } from "react-redux";
-import { userProfile } from "../../../store/userSlice";
 import "../../../css/profilestyle.css";
-import "../../../css/buttonstyle.css";
 
-function ProfileSection({ userId }) {
-  const [formData, setFormData] = useState({});
-  const dispatch = useDispatch();
-  const loggedInUser = useSelector((state) => state.auth.data);
-
-  const targetUserId = userId || loggedInUser?.userId;
-
+function ProfileSection({ userId, isEditing, formData, setFormData }) {
   const profileFields = [
     { id: "userId", name: "userId", label: "User ID", readOnly: true },
-    { id: "name", name: "name", label: "Name", readOnly: true },
+    { id: "name", name: "name", label: "Name", readOnly: !isEditing },
     { id: "email", name: "email", label: "Email", readOnly: true },
-    { id: "bio", label: "About", readOnly: true, type: "text-area" },
-    { id: "contact", name: "contact", label: "Contact", readOnly: true },
+    { id: "bio", label: "About", readOnly: !isEditing, type: "text-area" },
+    { id: "contact", name: "contact", label: "Contact", readOnly: !isEditing },
     { id: "gender", name: "gender", label: "Gender", readOnly: true },
-    { id: "role", name: "role", label: "Role", readOnly: true },
-    { id: "skills", label: "Skills", readOnly: true },
+
+    { id: "skills", label: "Skills", readOnly: !isEditing },
   ];
 
-  useEffect(() => {
-    const loadProfile = async () => {
-      if (!targetUserId) return;
-      const profile = await dispatch(userProfile(targetUserId));
-      if (profile?.payload?.success) {
-        setFormData(profile.payload.profiledata.profiledata);
-      }
-    };
-    loadProfile();
-  }, [dispatch, targetUserId, loggedInUser]);
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
 
   return (
     <div className="profile-container">
       <div className="profile-card">
-        <Input fields={profileFields} formData={formData} />
+        <Input
+          fields={profileFields}
+          formData={formData}
+          onChange={handleChange}
+        />
       </div>
     </div>
   );

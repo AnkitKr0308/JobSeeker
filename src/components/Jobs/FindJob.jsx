@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Card from "../templates/Card";
 import Button from "../templates/Button";
-import { findJob } from "../../store/jobSlice";
+import { CheckAppliedJobs, findJob } from "../../store/jobSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import Input from "../templates/Input";
@@ -9,6 +9,7 @@ import "../../css/card.css";
 import JobDetails from "./JobDetails";
 import Slider from "../templates/Slider";
 import ApplyJob from "./ApplyJob";
+import Modal from "../templates/Modal";
 
 function FindJob() {
   const dispatch = useDispatch();
@@ -18,6 +19,8 @@ function FindJob() {
   const loading = useSelector((state) => state.job.loading);
   const [openSlider, setOpenSlider] = useState(false);
   const [formResetKey, setFormResetKey] = useState(0);
+  const [modalData, setModalData] = useState("");
+  const [openModal, setOpenModal] = useState(false);
 
   const handleCloseSlider = () => {
     setOpenSlider(false);
@@ -64,9 +67,22 @@ function FindJob() {
     fetchedJobs();
   }, [dispatch, searchValue]);
 
-  const handleApplyNow = (jobId) => {
+  const handleApplyNow = async (jobId) => {
     setSelectedJobId(jobId);
-    setOpenSlider(true);
+    const checked = await dispatch(CheckAppliedJobs({ jobId }));
+    if (
+      checked.payload.result.success &&
+      checked.payload.result.message === "You have already applied for this job"
+    ) {
+      setOpenModal(true);
+      setModalData("You have already applied for this job");
+    } else {
+      setOpenSlider(true);
+    }
+  };
+
+  const closeModal = () => {
+    setOpenModal(false);
   };
 
   return (
@@ -130,6 +146,11 @@ function FindJob() {
           </div>
         )}
       </div>
+      {openModal && (
+        <Modal isOpen={openModal} onClose={closeModal} message={modalData}>
+          <Button label="OK" onClick={closeModal} />
+        </Modal>
+      )}
       {
         <Slider
           isOpen={openSlider}

@@ -118,3 +118,24 @@ export const fetchGetApplications = async () => {
     console.error("Error fetching applications: ", e);
   }
 };
+
+export const fetchCheckAppliedJob = async (jobId) => {
+  try {
+    const response = await fetch(
+      `${base_url}/CheckAppliedJobs?jobid=${jobId}`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    const result = await response.json();
+
+    if (response.ok) {
+      return { result };
+    } else {
+      return { result };
+    }
+  } catch (e) {
+    console.error("Error checking for applied job", e);
+  }
+};

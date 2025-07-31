@@ -40,11 +40,6 @@ function ApplyJob({ jobId, onSuccess }) {
     if (res.payload.success) {
       setOpenModal(true);
       setModalData(`Applied for ${jobId} successfully`);
-    } else if (
-      res.payload.message === "You have already applied for this job"
-    ) {
-      setOpenModal(true);
-      setModalData(res.payload.message);
     } else {
       alert(res.payload.message);
     }

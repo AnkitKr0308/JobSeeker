@@ -46,7 +46,6 @@ function AppliedJobs() {
         );
 
         SetJobs(filteredJobs);
-        console.log(filteredJobs);
       } catch (e) {
         console.error("Error fetching jobs", e);
       }
