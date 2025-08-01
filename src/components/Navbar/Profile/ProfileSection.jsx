@@ -24,6 +24,9 @@ function ProfileSection({ userId, isEditing, formData, setFormData }) {
 
   return (
     <div className="profile-container">
+      {/* <div className="profile-header-actions">
+        <h2 className="profile-title">My Profile</h2>
+      </div> */}
       <div className="profile-card">
         <Input
           fields={profileFields}

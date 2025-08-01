@@ -3,7 +3,7 @@ import Input from "../../templates/Input";
 import "../../../css/profilestyle.css";
 import "../../../css/buttonstyle.css";
 
-function ProjectSection({ userId, isEditing, formData, setFormData }) {
+function ProjectSection({ userId, isEditing, formData = [], setFormData }) {
   const projectFields = [
     { id: "title", label: "Title", readOnly: !isEditing },
     { id: "description", label: "Description", readOnly: !isEditing },
@@ -17,25 +17,47 @@ function ProjectSection({ userId, isEditing, formData, setFormData }) {
     setFormData(updated);
   };
 
+  const handleAddProject = () => {
+    const newProject = { title: "", description: "", skills: "" };
+    setFormData([...formData, newProject]);
+  };
+
+  const displayData = isEditing
+    ? formData?.length > 0
+      ? formData
+      : [{}]
+    : Array.isArray(formData) && formData.length > 0
+    ? formData
+    : null;
+
   return (
     <div className="profile-container">
-      <h2 className="profile-title">Projects</h2>
+      <div className="profile-header-actions">
+        <h2 className="profile-title">Projects</h2>
+        {isEditing && (
+          <button
+            type="button"
+            className="add-button"
+            onClick={handleAddProject}
+          >
+            + Add Project
+          </button>
+        )}
+      </div>
+
       <div className="profile-card">
-        {(isEditing ? (formData.length > 0 ? formData : [{}]) : formData)
-          .length > 0 ? (
-          (isEditing ? (formData.length > 0 ? formData : [{}]) : formData).map(
-            (item, index) => (
-              <div className="profile-card" key={index}>
-                <Input
-                  fields={projectFields}
-                  formData={item}
-                  onChange={(e) => handleChange(e, index)}
-                />
-              </div>
-            )
-          )
+        {displayData ? (
+          displayData.map((item, index) => (
+            <div className="profile-card" key={index}>
+              <Input
+                fields={projectFields}
+                formData={item}
+                onChange={(e) => handleChange(e, index)}
+              />
+            </div>
+          ))
         ) : (
-          <p>No Experience</p>
+          <p>No Projects</p>
         )}
       </div>
     </div>

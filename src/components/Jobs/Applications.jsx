@@ -14,7 +14,10 @@ import WorkExSection from "../Navbar/Profile/WorkExSection";
 function Applications() {
   const [searchValue, SetSearchValue] = useState("");
   const [appliedjobs, SetAppliedJobs] = useState([]);
-  const [selectedJob, setselectedJob] = useState(null);
+  const [selectedJobId, setSelectedJobId] = useState(null);
+  const [selectedApplication, setSelectedApplication] = useState(null);
+  const [selectedUserProfile, setSelectedUserProfile] = useState(null);
+
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.job.loading);
   const [openSlider, setOpenSlider] = useState(false);
@@ -23,9 +26,12 @@ function Applications() {
     setOpenSlider(false);
   };
 
-  const handleUserProfile = (job) => {
-    setselectedJob(job);
-    setOpenSlider(true);
+  const handleUserProfile = (application, userProfile) => {
+    if (application && userProfile) {
+      setSelectedApplication(application);
+      setSelectedUserProfile(userProfile);
+      setOpenSlider(true);
+    }
   };
 
   const searchFields = [
@@ -43,7 +49,7 @@ function Applications() {
   ];
 
   const handleViewDetails = (id) => {
-    setselectedJob((prevId) => (prevId === id ? null : id));
+    setSelectedJobId((prevId) => (prevId === id ? null : id));
   };
 
   const handleSearchChange = (e) => {
@@ -56,18 +62,21 @@ function Applications() {
       try {
         const result = await dispatch(applications());
 
-        const allJobs = Array.isArray(result.payload.result)
+        const allItems = Array.isArray(result.payload.result)
           ? result.payload.result
           : [];
 
-        const filteredJobs = allJobs.filter((job) =>
-          job?.jobTitle
+        const filteredItems = allItems.filter((item) =>
+          item?.application?.jobTitle
             ?.toLowerCase()
             .includes((searchValue.searchbox || "").toLowerCase())
         );
 
-        console.log("Filtered Jobs:", filteredJobs);
-        SetAppliedJobs(filteredJobs);
+        SetAppliedJobs(filteredItems);
+
+        console.log("Filtered Jobs:", filteredItems);
+        SetAppliedJobs(filteredItems);
+        console.log("All Jobs:", allItems);
       } catch (e) {
         console.error("Error fetching jobs", e);
       }
@@ -86,26 +95,26 @@ function Applications() {
       </div>
       <div>
         {Array.isArray(appliedjobs) && appliedjobs.length > 0 ? (
-          appliedjobs.map((job) => {
-            const isExpanded = selectedJob === job.id;
+          appliedjobs.map(({ application, userProfile }) => {
+            const isExpanded = selectedJobId === application.id;
 
             return (
-              <div className="card-container" key={job.id}>
+              <div className="card-container" key={application.id}>
                 <Card
                   isExpanded={isExpanded}
                   title={
                     isExpanded
-                      ? `Job Details: ${job.jobId}`
-                      : `Job No: ${job.jobId}`
+                      ? `Job Details: ${application.jobId}`
+                      : `Job No: ${application.jobId}`
                   }
-                  subtitle={`Title: ${job.jobTitle}`}
-                  description={job.skillsRequired}
+                  subtitle={`Title: ${application.jobTitle}`}
+                  description={application.skillsRequired}
                   footer={
                     <>
                       {isExpanded && (
                         <>
                           <div className="job-details-inside-card">
-                            <JobDetails jobid={job.jobId} />
+                            <JobDetails jobid={application.jobId} />
                           </div>
                         </>
                       )}
@@ -114,7 +123,7 @@ function Applications() {
                         style={{ marginTop: "12px" }}
                       >
                         <NavLink
-                          onClick={() => handleViewDetails(job.id)}
+                          onClick={() => handleViewDetails(application.id)}
                           className="view-link"
                         >
                           {isExpanded ? "Hide Details" : "View Details"}
@@ -122,7 +131,9 @@ function Applications() {
                         <Button
                           className="apply-button"
                           label="View User"
-                          onClick={() => handleUserProfile(job)}
+                          onClick={() =>
+                            handleUserProfile(application, userProfile)
+                          }
                         />
                       </div>
                     </>
@@ -141,7 +152,7 @@ function Applications() {
           </div>
         )}
       </div>
-      {openSlider && selectedJob && (
+      {openSlider && selectedApplication && selectedUserProfile && (
         <Slider
           isOpen={openSlider}
           title="User Profile"
@@ -151,12 +162,20 @@ function Applications() {
             className="job-details-inside-card"
             style={{ marginBottom: "15px" }}
           >
-            <ProfileSection userId={selectedJob.userId} />
-            <ProjectSection userId={selectedJob.userId} />
-            <WorkExSection userId={selectedJob.userId} />
+            <ProfileSection
+              userId={selectedApplication.userId}
+              formData={selectedUserProfile}
+            />
+            <ProjectSection
+              formData={selectedUserProfile.projects}
+              isEditing={false}
+            />
+            <WorkExSection
+              formData={selectedUserProfile.workExperiences}
+              isEditing={false}
+            />
             <div className="profile-card">
-              <Input fields={userFields} formData={selectedJob} />
-
+              <Input fields={userFields} formData={selectedApplication || {}} />
               <div className="slider-footer-button">
                 <Button className="apply-button" label="Schedule Interview" />
               </div>

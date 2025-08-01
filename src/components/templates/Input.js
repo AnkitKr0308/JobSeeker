@@ -30,7 +30,7 @@ function Input({
               type={field.type || "text"}
               onChange={onChange}
               readOnly={field.readOnly || false}
-              value={formData[field.id] || ""}
+              value={formData?.[field.id] ?? ""}
               required={field.required || false}
               {...props}
             />
@@ -42,7 +42,7 @@ function Input({
               type={field.type || "text"}
               onChange={onChange}
               readOnly={field.readOnly || false}
-              value={formData[field.id] || ""}
+              value={formData?.[field.id] ?? ""}
               required={field.required || false}
               {...props}
             />

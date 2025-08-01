@@ -33,11 +33,6 @@ function Profile({ userId }) {
     SetIsEditing((prev) => !prev);
   };
 
-  // useEffect(() => {
-  //   console.log("projectsData changed:", projectsData);
-  //   console.log("workExData changed:", workExData);
-  // }, [projectsData, workExData]);
-
   useEffect(() => {
     const loadProfile = async () => {
       if (!targetUserId) return;
@@ -48,8 +43,6 @@ function Profile({ userId }) {
         setProfileData(data);
         setProjectsData(data.projects || []);
         setWorkExData(data.workExperiences || []);
-        // console.log("Loaded projects:", data.projects);
-        // console.log("Loaded work experiences:", data.workExperiences);
       }
     };
     loadProfile();
@@ -66,8 +59,6 @@ function Profile({ userId }) {
       projects: projectsData,
       workExperiences: workExData,
     };
-
-    console.log("Sending payload to backend:", payload);
 
     const res = await dispatch(userProfileUpdate(payload));
     if (res.payload?.success) {
@@ -87,15 +78,17 @@ function Profile({ userId }) {
 
   return (
     <div className="profile-container">
-      <span>
+      <div className="profile-header-actions">
         <h2 className="profile-title">
           {isOwnProfile ? "My Profile" : "User Profile"}
         </h2>
-        <Button
-          label={isEditing ? "Cancel" : "Edit Profile"}
-          onClick={toggleEdit}
-        />
-      </span>
+        {isOwnProfile && (
+          <button type="button" className="add-button" onClick={toggleEdit}>
+            {isEditing ? "Cancel" : "Edit Profile"}
+          </button>
+        )}
+      </div>
+
       <div className="profile-card">
         <ProfileSection
           isEditing={isEditing}
