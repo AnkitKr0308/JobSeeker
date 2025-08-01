@@ -7,6 +7,10 @@ import {
   fetchVerifySession,
 } from "../jobportal_api/authAPI";
 
+// Load token and user from localStorage on init
+const savedToken = localStorage.getItem("jwt_token");
+const savedUser = localStorage.getItem("user");
+
 export const verifySession = createAsyncThunk(
   "auth/verifySession",
   async () => {
@@ -30,7 +34,6 @@ export const signupUser = createAsyncThunk(
   "auth/signupUser",
   async (formData) => {
     const response = await fetchSignUp(formData);
-
     if (response && response.success) {
       return { success: true, data: response };
     }
@@ -50,41 +53,61 @@ export const updatePassword = createAsyncThunk(
   }
 );
 
-// Load from localStorage
-const savedUser = localStorage.getItem("user");
-
 const authSlice = createSlice({
   name: "auth",
   initialState: {
     loading: false,
+    token: savedToken || null,
     data: savedUser ? JSON.parse(savedUser) : null,
     status: !!savedUser,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    setAuthFromStorage: (state, action) => {
+      state.token = action.payload.token;
+      state.data = action.payload.user;
+      state.status = true;
+      state.error = null;
+    },
+    clearAuth: (state) => {
+      state.token = null;
+      state.data = null;
+      state.status = false;
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       // LOGIN
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         if (action.payload?.success && action.payload.data?.userId) {
           state.data = action.payload.data;
           state.status = true;
+          state.token = localStorage.getItem("jwt_token");
           localStorage.setItem("user", JSON.stringify(action.payload.data));
         } else {
           state.data = null;
           state.status = false;
+          state.token = null;
           state.error = action.payload?.message || "Login failed";
           localStorage.removeItem("user");
+          localStorage.removeItem("jwt_token");
         }
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
       })
 
       // SIGNUP
       .addCase(signupUser.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
@@ -110,9 +133,11 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state) => {
         localStorage.removeItem("user");
+        localStorage.removeItem("jwt_token");
         state.loading = false;
         state.data = null;
         state.status = false;
+        state.token = null;
         state.error = null;
       })
       .addCase(logoutUser.rejected, (state, action) => {
@@ -123,6 +148,7 @@ const authSlice = createSlice({
       // UPDATE PASSWORD
       .addCase(updatePassword.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(updatePassword.fulfilled, (state) => {
         state.loading = false;
@@ -135,6 +161,7 @@ const authSlice = createSlice({
       // VERIFY SESSION
       .addCase(verifySession.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(verifySession.fulfilled, (state, action) => {
         state.loading = false;
@@ -144,7 +171,9 @@ const authSlice = createSlice({
           // Clear user data if session invalid or expired
           state.status = false;
           state.data = null;
+          state.token = null;
           localStorage.removeItem("user");
+          localStorage.removeItem("jwt_token");
           return;
         }
 
@@ -161,13 +190,15 @@ const authSlice = createSlice({
         }
       })
       .addCase(verifySession.rejected, (state) => {
-        // On error verifying session, clear user data
         state.loading = false;
         state.status = false;
         state.data = null;
+        state.token = null;
         localStorage.removeItem("user");
+        localStorage.removeItem("jwt_token");
       });
   },
 });
 
+export const { setAuthFromStorage, clearAuth } = authSlice.actions;
 export default authSlice.reducer;

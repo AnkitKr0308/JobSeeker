@@ -1,4 +1,5 @@
 import conf from "../conf/conf";
+import { getAuthHeaders } from "./authAPI";
 
 const base_url = `${conf.jobportal_base_url}/Jobs`;
 
@@ -6,8 +7,7 @@ export const fetchCreateJob = async (data) => {
   try {
     const response = await fetch(`${base_url}/createjob`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
+      headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
@@ -31,7 +31,10 @@ export const fetchCreateJob = async (data) => {
 
 export const fetchFindJobs = async (search) => {
   try {
-    const response = await fetch(`${base_url}/jobs?query=${search}`);
+    const response = await fetch(`${base_url}/jobs?query=${search}`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
     const fetchedjobdata = await response.json();
 
     if (response.ok) {

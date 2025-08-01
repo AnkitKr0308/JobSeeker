@@ -2,10 +2,21 @@ import conf from "../conf/conf";
 
 const base_url = conf.jobportal_base_url;
 
+export const getAuthHeaders = () => {
+  const token = localStorage.getItem("jwt_token");
+  return token
+    ? {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
+    : { "Content-Type": "application/json" };
+};
+
 export const fetchRoles = async () => {
   try {
-    const response = await fetch(`${base_url}/Roles/roles`);
-
+    const response = await fetch(`${base_url}/Roles/roles`, {
+      // headers: getAuthHeaders(),
+    });
     if (!response.ok) {
       console.error("No roles found");
     } else {
@@ -19,12 +30,15 @@ export const fetchRoles = async () => {
 export const fetchVerifySession = async () => {
   try {
     const response = await fetch(`${base_url}/Users/session`, {
-      credentials: "include",
+      headers: getAuthHeaders(),
     });
 
+    if (!response.ok) {
+      return { success: false };
+    }
     const result = await response.json();
 
-    if (!response.ok || !result.userId) {
+    if (!result || !result.userId) {
       return { success: false };
     }
 
@@ -39,20 +53,15 @@ export const fetchLogin = async (username, password) => {
   try {
     const response = await fetch(`${base_url}/Users/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        email: username,
-        password: password,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: username, password }),
     });
 
     const result = await response.json();
 
-    if (response.ok) {
-      return { success: true, data: result };
+    if (response.ok && result.token) {
+      localStorage.setItem("jwt_token", result.token);
+      return { success: true, data: result.user };
     } else {
       return { success: false, message: result.message || "Login failed" };
     }
@@ -89,7 +98,7 @@ export const fetchUpdatePassword = async (formData) => {
       `${base_url}/Users/updatepassword/${formData.email}`,
       {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders(),
         body: JSON.stringify(formData),
       }
     );
@@ -103,9 +112,6 @@ export const fetchUpdatePassword = async (formData) => {
 };
 
 export const fetchLogout = async () => {
-  await fetch(`${base_url}/Users/logout`, {
-    method: "POST",
-    credentials: "include",
-  });
+  localStorage.removeItem("jwt_token");
   return null;
 };
