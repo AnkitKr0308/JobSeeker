@@ -12,6 +12,7 @@ function JobDetails({ jobid }) {
   const fields = [
     { id: "jobId", label: "Job ID", readOnly: true },
     { id: "title", label: "Title", readOnly: true },
+    { id: "role", label: "Job Role", readOnly: true },
     {
       id: "description",
       label: "Description",
@@ -20,7 +21,7 @@ function JobDetails({ jobid }) {
     },
     { id: "skillsRequired", label: "Skills Required", readOnly: true },
     { id: "qualifications", label: "Qualifications", readOnly: true },
-    { id: "role", label: "Job Role", readOnly: true },
+
     { id: "locations", label: "Locations", readOnly: true },
     { id: "type", label: "Job Type", readOnly: true },
     { id: "experience", label: "Experience", readOnly: true },

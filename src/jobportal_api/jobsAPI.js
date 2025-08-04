@@ -49,7 +49,10 @@ export const fetchFindJobs = async (search) => {
 
 export const fetchFindJobsByJobId = async (jobid) => {
   try {
-    const response = await fetch(`${base_url}/jobdetails/${jobid}`);
+    const response = await fetch(`${base_url}/jobdetails/${jobid}`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
     const result = await response.json();
 
     if (response.ok) {
@@ -71,10 +74,7 @@ export const fetchApplyJob = async (data) => {
   try {
     const response = await fetch(`${base_url}/applyjob`, {
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
-      credentials: "include",
+      headers: getAuthHeaders(),
       body: JSON.stringify(data),
     });
 
@@ -93,10 +93,8 @@ export const fetchAppliedJobs = async () => {
   try {
     const response = await fetch(`${base_url}/jobsapplied`, {
       method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
+
+      headers: getAuthHeaders(),
     });
 
     const result = await response.json();
@@ -111,7 +109,10 @@ export const fetchAppliedJobs = async () => {
 
 export const fetchGetApplications = async () => {
   try {
-    const response = await fetch(`${base_url}/applications`);
+    const response = await fetch(`${base_url}/applications`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
     const result = await response.json();
 
     if (response) {
@@ -128,7 +129,7 @@ export const fetchCheckAppliedJob = async (jobId) => {
       `${base_url}/CheckAppliedJobs?jobid=${jobId}`,
       {
         method: "GET",
-        credentials: "include",
+        headers: getAuthHeaders(),
       }
     );
     const result = await response.json();
@@ -140,5 +141,36 @@ export const fetchCheckAppliedJob = async (jobId) => {
     }
   } catch (e) {
     console.error("Error checking for applied job", e);
+  }
+};
+
+export const fetchUpdateApplicationStatus = async (applicationId, status) => {
+  try {
+    const response = await fetch(
+      `${base_url}/updatestatus/?applicationId=${applicationId}&status=${encodeURIComponent(
+        status
+      )}`,
+      {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ applicationId, status }),
+      }
+    );
+
+    const res = await response.json();
+    if (response.ok) {
+      return {
+        success: true,
+        message: "Application status updated successfully",
+      };
+    } else {
+      return {
+        success: false,
+        message: res.message || "Error updating application status",
+      };
+    }
+  } catch (e) {
+    console.error("Error updating application status", e);
+    return { success: false, message: "Error updating application status" };
   }
 };

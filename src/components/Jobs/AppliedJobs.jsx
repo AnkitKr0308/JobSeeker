@@ -76,7 +76,8 @@ function AppliedJobs() {
                       ? `Job Details: ${job.jobId}`
                       : `Job No: ${job.jobId}`
                   }
-                  subtitle={`Title: ${job.title}`}
+                  status={` ${job.status}`}
+                  subtitle={`${job.title}`}
                   description={job.skillsRequired}
                   footer={
                     <>

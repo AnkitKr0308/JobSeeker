@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Input from "../templates/Input";
 import Card from "../templates/Card";
 import { useDispatch, useSelector } from "react-redux";
-import { applications } from "../../store/jobSlice";
+import { applications, UpdateApplicationStatus } from "../../store/jobSlice";
 import JobDetails from "./JobDetails";
 import { NavLink } from "react-router-dom";
 import Button from "../templates/Button";
@@ -26,11 +26,31 @@ function Applications() {
     setOpenSlider(false);
   };
 
-  const handleUserProfile = (application, userProfile) => {
+  const handleUserProfile = async (application, userProfile) => {
     if (application && userProfile) {
       setSelectedApplication(application);
       setSelectedUserProfile(userProfile);
       setOpenSlider(true);
+      console.log(application.id);
+      const updatedstatus = "Application Viewed";
+      const result = await dispatch(
+        UpdateApplicationStatus({
+          applicationId: application.id,
+          status: updatedstatus,
+        })
+      );
+      if (result.payload?.success) {
+        SetAppliedJobs((prev) =>
+          prev.map((item) =>
+            item.application.id === application.id
+              ? {
+                  ...item,
+                  application: { ...item.application, status: updatedstatus },
+                }
+              : item
+          )
+        );
+      }
     }
   };
 
@@ -107,6 +127,7 @@ function Applications() {
                       ? `Job Details: ${application.jobId}`
                       : `Job No: ${application.jobId}`
                   }
+                  status={application.status}
                   subtitle={`Title: ${application.jobTitle}`}
                   description={application.skillsRequired}
                   footer={

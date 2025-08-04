@@ -33,9 +33,12 @@ function ApplyJob({ jobId, onSuccess }) {
       noticePeriod: parseInt(formData.noticePeriod, 10),
       readyToRelocate: formData.readyToRelocate,
       currentLocation: formData.currentLocation,
+      status: "Applied",
     };
 
     const res = await dispatch(applyJob(payload));
+
+    console.log(res);
 
     if (res.payload.success) {
       setOpenModal(true);

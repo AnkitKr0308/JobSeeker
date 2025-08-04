@@ -21,6 +21,7 @@ function FindJob() {
   const [formResetKey, setFormResetKey] = useState(0);
   const [modalData, setModalData] = useState("");
   const [openModal, setOpenModal] = useState(false);
+  const user = useSelector((state) => state.auth.data);
 
   const handleCloseSlider = () => {
     setOpenSlider(false);
@@ -70,6 +71,7 @@ function FindJob() {
   const handleApplyNow = async (jobId) => {
     setSelectedJobId(jobId);
     const checked = await dispatch(CheckAppliedJobs({ jobId }));
+
     if (
       checked.payload.result.success &&
       checked.payload.result.message === "You have already applied for this job"
@@ -108,8 +110,9 @@ function FindJob() {
                       ? `Job Details: ${job.jobId}`
                       : `Job No: ${job.jobId}`
                   }
-                  subtitle={`Title: ${job.title}`}
+                  subtitle={` ${job.title}`}
                   description={job.skillsRequired}
+                  subdescription={`${job.qualifications} | ${job.locations} | ${job.type}`}
                   footer={
                     <>
                       {isExpanded && (
@@ -124,11 +127,13 @@ function FindJob() {
                         >
                           {isExpanded ? "Hide Details" : "View Details"}
                         </NavLink>
-                        <Button
-                          className="apply-button"
-                          label="Apply Now"
-                          onClick={() => handleApplyNow(job.jobId)}
-                        />
+                        {user && user.role === "Employee" && (
+                          <Button
+                            className="apply-button"
+                            label="Apply Now"
+                            onClick={() => handleApplyNow(job.jobId)}
+                          />
+                        )}
                       </div>
                     </>
                   }

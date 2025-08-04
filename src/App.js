@@ -9,7 +9,7 @@ function App() {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
 
-  console.log(auth);
+  
 
   useEffect(() => {
     const token = localStorage.getItem("jwt_token");
