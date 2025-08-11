@@ -104,6 +104,8 @@ function Applications() {
     fetchedJobs();
   }, [dispatch, searchValue]);
 
+  console.log(applications);
+
   return (
     <div className="findjob-container" style={{ marginTop: "12px" }}>
       <div className="searchbox">
@@ -130,6 +132,7 @@ function Applications() {
                   status={application.status}
                   subtitle={`Title: ${application.jobTitle}`}
                   description={application.skillsRequired}
+                  subdescription={`${application.jobExperience} | ${application.jobQualifications} | ${application.jobLocations}`}
                   footer={
                     <>
                       {isExpanded && (
@@ -150,7 +153,7 @@ function Applications() {
                           {isExpanded ? "Hide Details" : "View Details"}
                         </NavLink>
                         <Button
-                          className="apply-button"
+                          className="btn-blue"
                           label="View User"
                           onClick={() =>
                             handleUserProfile(application, userProfile)
@@ -197,8 +200,9 @@ function Applications() {
             />
             <div className="profile-card">
               <Input fields={userFields} formData={selectedApplication || {}} />
-              <div className="slider-footer-button">
-                <Button className="apply-button" label="Schedule Interview" />
+              <div className="slider-footer-buttons-row">
+                <Button className="btn-blue" label="Schedule Interview" />
+                <Button className="btn-red" label="Reject" />
               </div>
             </div>
           </div>

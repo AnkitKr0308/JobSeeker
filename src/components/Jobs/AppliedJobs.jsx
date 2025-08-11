@@ -79,6 +79,7 @@ function AppliedJobs() {
                   status={` ${job.status}`}
                   subtitle={`${job.title}`}
                   description={job.skillsRequired}
+                  subdescription={`${job.qualifications} | ${job.locations} | ${job.type}`}
                   footer={
                     <>
                       {isExpanded && (

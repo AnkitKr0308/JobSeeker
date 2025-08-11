@@ -48,3 +48,17 @@
   color: #666;
   cursor: not-allowed;
 }
+
+.slider-footer-buttons-row {
+  display: flex;
+  margin-top: 10px;
+}
+
+.btn-red {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-red:hover {
+  background-color: #c82333;
+}

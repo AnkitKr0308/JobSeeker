@@ -1,6 +1,6 @@
 // Button.js
 import React, { useState } from "react";
-import "../../css/buttonstyle.css"
+import "../../css/buttonstyle.css";
 import "../../css/dropdownstyle.css";
 
 function Button({
@@ -12,6 +12,7 @@ function Button({
   disabled = false,
   onDropdownSelect,
   fullwidth = false,
+  className,
 }) {
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -29,7 +30,9 @@ function Button({
     <div className={`dropdown ${fullwidth ? "full-width" : ""}`}>
       <button
         type={type}
-        className={`btn ${isDropdown ? "btn-white" : "btn-blue"}`}
+        className={`btn ${
+          className || (isDropdown ? "btn-white" : "btn-blue")
+        }`}
         onClick={handleToggle}
         disabled={disabled}
       >
