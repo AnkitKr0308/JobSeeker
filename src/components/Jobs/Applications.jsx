@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import Input from "../templates/Input";
 import Card from "../templates/Card";
 import { useDispatch, useSelector } from "react-redux";
-import { applications, UpdateApplicationStatus } from "../../store/jobSlice";
+import {
+  applications,
+  scheduleInterview,
+  UpdateApplicationStatus,
+} from "../../store/jobSlice";
 import JobDetails from "./JobDetails";
 import { NavLink } from "react-router-dom";
 import Button from "../templates/Button";
@@ -10,6 +14,8 @@ import Slider from "../templates/Slider";
 import ProjectSection from "../Navbar/Profile/ProjectSection";
 import ProfileSection from "../Navbar/Profile/ProfileSection";
 import WorkExSection from "../Navbar/Profile/WorkExSection";
+import Modal from "../templates/Modal";
+import Calendar from "../templates/Calendar";
 
 function Applications() {
   const [searchValue, SetSearchValue] = useState("");
@@ -17,13 +23,27 @@ function Applications() {
   const [selectedJobId, setSelectedJobId] = useState(null);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [selectedUserProfile, setSelectedUserProfile] = useState(null);
-
+  const [openModal, setOpenModal] = useState(false);
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.job.loading);
   const [openSlider, setOpenSlider] = useState(false);
+  const [selectedDateTime, setSelectedDateTime] = useState("");
 
   const handleCloseSlider = () => {
     setOpenSlider(false);
+  };
+
+  const updateApplicationStatusInState = (applicationId, newStatus) => {
+    SetAppliedJobs((prev) =>
+      prev.map((item) =>
+        item.application.id === applicationId
+          ? {
+              ...item,
+              application: { ...item.application, status: newStatus },
+            }
+          : item
+      )
+    );
   };
 
   const handleUserProfile = async (application, userProfile) => {
@@ -31,7 +51,7 @@ function Applications() {
       setSelectedApplication(application);
       setSelectedUserProfile(userProfile);
       setOpenSlider(true);
-      console.log(application.id);
+
       const updatedstatus = "Application Viewed";
       const result = await dispatch(
         UpdateApplicationStatus({
@@ -40,16 +60,7 @@ function Applications() {
         })
       );
       if (result.payload?.success) {
-        SetAppliedJobs((prev) =>
-          prev.map((item) =>
-            item.application.id === application.id
-              ? {
-                  ...item,
-                  application: { ...item.application, status: updatedstatus },
-                }
-              : item
-          )
-        );
+        updateApplicationStatusInState(application.id, updatedstatus);
       }
     }
   };
@@ -94,9 +105,7 @@ function Applications() {
 
         SetAppliedJobs(filteredItems);
 
-        console.log("Filtered Jobs:", filteredItems);
         SetAppliedJobs(filteredItems);
-        console.log("All Jobs:", allItems);
       } catch (e) {
         console.error("Error fetching jobs", e);
       }
@@ -104,7 +113,36 @@ function Applications() {
     fetchedJobs();
   }, [dispatch, searchValue]);
 
-  console.log(applications);
+  const chooseSlot = () => {
+    setSelectedDateTime("");
+    setOpenModal(true);
+  };
+
+  const confirmInterview = async () => {
+    if (!selectedDateTime) {
+      alert("Please select a date and time for the interview.");
+      return;
+    }
+    const payload = {
+      applicationId: selectedApplication.id,
+      jobId: selectedApplication.jobId,
+      userId: selectedApplication.userId,
+      interviewDate: selectedDateTime,
+      
+    };
+
+    
+
+    const result = await dispatch(scheduleInterview(payload));
+    if (result?.payload?.success) {
+      setOpenModal(false);
+      updateApplicationStatusInState(
+        selectedApplication.id,
+        "Interview Scheduled"
+      );
+      
+    }
+  };
 
   return (
     <div className="findjob-container" style={{ marginTop: "12px" }}>
@@ -201,12 +239,26 @@ function Applications() {
             <div className="profile-card">
               <Input fields={userFields} formData={selectedApplication || {}} />
               <div className="slider-footer-buttons-row">
-                <Button className="btn-blue" label="Schedule Interview" />
+                <Button
+                  className="btn-blue"
+                  label="Schedule Interview"
+                  onClick={chooseSlot}
+                />
                 <Button className="btn-red" label="Reject" />
               </div>
             </div>
           </div>
         </Slider>
+      )}
+      {openModal && (
+        <Modal
+          isOpen={openModal}
+          title="Select Interview Slot"
+          onClose={() => setOpenModal(false)}
+        >
+          <Calendar value={selectedDateTime} onChange={setSelectedDateTime} />
+          <Button label="Confirm" onClick={confirmInterview} />
+        </Modal>
       )}
     </div>
   );

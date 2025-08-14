@@ -1,4 +1,3 @@
-// Button.js
 import React, { useState } from "react";
 import "../../css/buttonstyle.css";
 import "../../css/dropdownstyle.css";

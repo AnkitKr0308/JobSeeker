@@ -11,7 +11,7 @@
 .navbar-brand {
   font-size: 24px;
   font-weight: bold;
-  color:white;
+  color: white;
   cursor: pointer;
 }
 
@@ -29,9 +29,8 @@
 
 .profile-icon {
   font-size: 24px;
-  color:white;
+  color: white;
   background: white;
-  
 }
 
 .dropdown-menu {
@@ -65,4 +64,53 @@
   margin: 0;
   border: none;
   border-top: 1px solid #ddd;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navbar-notification {
+  position: relative;
+  cursor: pointer;
+}
+
+.notif-icon {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 50%;
+}
+
+.notif-dropdown {
+  min-width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notif-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.notif-item.unread {
+  background-color: #f9f9f9;
+  font-weight: bold;
+}
+
+.empty {
+  padding: 10px;
+  text-align: center;
+  color: #888;
 }

@@ -7,6 +7,7 @@ import {
   fetchFindJobs,
   fetchFindJobsByJobId,
   fetchGetApplications,
+  fetchScheduleInterview,
   fetchUpdateApplicationStatus,
 } from "../jobportal_api/jobsAPI";
 
@@ -55,6 +56,14 @@ export const UpdateApplicationStatus = createAsyncThunk(
   "jobs/updateapplicationstatus",
   async ({ applicationId, status }) => {
     const response = await fetchUpdateApplicationStatus(applicationId, status);
+    return response;
+  }
+);
+
+export const scheduleInterview = createAsyncThunk(
+  "jobs/scheduleinterview",
+  async (data) => {
+    const response = await fetchScheduleInterview(data);
     return response;
   }
 );
@@ -163,6 +172,18 @@ const jobSlice = createSlice({
         state.status = action.payload.success;
       })
       .addCase(UpdateApplicationStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(scheduleInterview.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(scheduleInterview.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+        state.status = action.payload.success;
+      })
+      .addCase(scheduleInterview.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

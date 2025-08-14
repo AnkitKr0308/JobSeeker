@@ -174,3 +174,22 @@ export const fetchUpdateApplicationStatus = async (applicationId, status) => {
     return { success: false, message: "Error updating application status" };
   }
 };
+
+export const fetchScheduleInterview = async (data) => {
+  try {
+    const response = await fetch(`${base_url}/scheduleinterview`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if (response) {
+      return result;
+    }
+  } catch (e) {
+    console.error("Error scheduling interview", e);
+    return { success: false, message: "Error scheduling interview" };
+  }
+};

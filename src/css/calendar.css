@@ -1,0 +1,27 @@
+/* CSS */
+.dt-field {
+  position: relative;
+  display: inline-block;
+}
+
+.dt-field input[type="datetime-local"] {
+  padding: 10px 40px 10px 12px; /* right padding for icon */
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.dt-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateY(-50%);
+  pointer-events: none; /* click goes to input (opens picker) */
+  fill: #888;
+}
+
+/* optional focus style */
+.dt-field input:focus + .dt-icon {
+  fill: #555;
+}
