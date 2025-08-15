@@ -3,6 +3,10 @@ import "../../css/Navbar.css";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../../store/authSlice";
+import {
+  getNotifications,
+  updateNotificationStatus,
+} from "../../store/userSlice";
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -10,13 +14,9 @@ function Navbar() {
   const user = useSelector((state) => state.auth.data);
   const loading = useSelector((state) => state.auth.loading);
 
-  const [notifications, setNotifications] = useState([
-    // { id: 1, text: "Your application has been viewed", read: false },
-    // { id: 2, text: "New job posted in your field", read: false },
-    // { id: 3, text: "Interview scheduled for 20th Aug", read: true },
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -46,6 +46,58 @@ function Navbar() {
     await dispatch(logoutUser());
     navigate("/login");
   };
+
+  const clearNotifications = async () => {
+    if (notifications.length === 0) return;
+
+    const payload = {
+      notificationIds: notifications.map((n) => n.id),
+      userId: user.userId,
+      isRead: true,
+      isClear: true,
+    };
+
+    try {
+      const result = await dispatch(updateNotificationStatus(payload));
+      if (result.payload?.success) {
+        setNotifications([]);
+      }
+    } catch (e) {
+      console.error("Error updating notification status");
+    }
+  };
+
+  const markNotificationAsRead = async (id) => {
+    const payload = {
+      notificationIds: [id],
+      isRead: true,
+    };
+
+    try {
+      const result = await dispatch(updateNotificationStatus(payload));
+      if (result.payload.success) {
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
+        );
+      }
+    } catch (e) {
+      console.error("Error updating notification status");
+    }
+  };
+
+  useEffect(() => {
+    const notificationMessage = async () => {
+      try {
+        const result = await dispatch(getNotifications());
+        if (result.payload?.success) {
+          setNotifications(result.payload.notifications);
+        }
+      } catch (e) {
+        console.error("Error fetching notification");
+      }
+    };
+    notificationMessage();
+  }, [dispatch]);
 
   if (loading) return null;
 
@@ -79,7 +131,17 @@ function Navbar() {
             onClick={() => setIsNotifOpen((prev) => !prev)}
             ref={notifRef}
           >
-            <span className="notif-icon">🔔</span>
+            <span className="notif-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                fill="white"
+              >
+                <path d="M12 2C10.343 2 9 3.343 9 5v1C6.243 6 4 8.243 4 11v5l-1 1v1h18v-1l-1-1v-5c0-2.757-2.243-5-5-5V5c0-1.657-1.343-3-3-3zM12 22c1.104 0 2-.896 2-2h-4c0 1.104.896 2 2 2z" />
+              </svg>
+            </span>
             {unreadCount > 0 && (
               <span className="notif-badge">{unreadCount}</span>
             )}
@@ -88,14 +150,33 @@ function Navbar() {
                 {notifications.length === 0 ? (
                   <div className="empty">No notifications</div>
                 ) : (
-                  notifications.map((n) => (
-                    <div
-                      key={n.id}
-                      className={`notif-item ${n.read ? "read" : "unread"}`}
-                    >
-                      {n.text}
+                  <>
+                    <div className="notif-header">
+                      <button
+                        className="clear-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          clearNotifications();
+                        }}
+                      >
+                        Clear
+                      </button>
                     </div>
-                  ))
+                    <hr className="notif-separator" />
+
+                    {notifications.map((n) => (
+                      <div
+                        key={n.id}
+                        className={`notif-item ${n.isRead ? "read" : "unread"}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          markNotificationAsRead(n.id);
+                        }}
+                      >
+                        {n.message}
+                      </div>
+                    ))}
+                  </>
                 )}
               </div>
             )}

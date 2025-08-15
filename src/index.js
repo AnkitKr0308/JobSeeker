@@ -17,6 +17,8 @@ import ProfilePage from "./pages/ProfilePage";
 import ChangePassword from "./components/Navbar/Profile/ChangePassword";
 import AppliedJobsPage from "./pages/AppliedJobsPage";
 import ApplicationsPage from "./pages/ApplicationsPage";
+import InterviewPage from "./pages/InterviewPage";
+import InterviewDetails from "./components/Jobs/InterviewDetails";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -84,6 +86,14 @@ const router = createBrowserRouter([
             <ApplicationsPage />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "/interviews",
+        element: <InterviewPage />,
+      },
+      {
+        path: "/interviews/:id",
+        element: <InterviewDetails />,
       },
     ],
   },

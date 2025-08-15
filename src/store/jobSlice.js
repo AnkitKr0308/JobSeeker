@@ -34,10 +34,13 @@ export const applyJob = createAsyncThunk("jobs/applyjob", async (data) => {
   return res;
 });
 
-export const appliedJobs = createAsyncThunk("jobs/appliedjobs", async () => {
-  const res = await fetchAppliedJobs();
-  return res;
-});
+export const appliedJobs = createAsyncThunk(
+  "jobs/appliedjobs",
+  async ({ status } = {}) => {
+    const res = await fetchAppliedJobs({ status });
+    return res;
+  }
+);
 
 export const applications = createAsyncThunk("jobs/applications", async () => {
   const res = await fetchGetApplications();

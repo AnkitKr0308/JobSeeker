@@ -9,16 +9,25 @@ function Card({
   isExpanded,
   status,
   subdescription,
+  onClick,
+  descriptionLabel,
 }) {
   return (
-    <div className="card">
+    <div className="card" onClick={onClick}>
       {(title || status) && (
         <div className="card-header-row">
           <h3 className="card-title">{title}</h3>
           {status && (
             <div className="card-status">
               <span className="status-label">Status:</span>{" "}
-              <span className="status-value">{status}</span>
+              {/* <span className="status-value">{status}</span> */}
+              <span
+                className={
+                  status === "Rejected" ? "status-rejected" : "status-success"
+                }
+              >
+                {status}
+              </span>
             </div>
           )}
         </div>
@@ -36,7 +45,7 @@ function Card({
               <br />
               {description && (
                 <p className="card-text">
-                  <strong>Skills Required:</strong>
+                  <strong>{descriptionLabel}: </strong>
                   {description}
                 </p>
               )}

@@ -89,9 +89,14 @@ export const fetchApplyJob = async (data) => {
   }
 };
 
-export const fetchAppliedJobs = async () => {
+export const fetchAppliedJobs = async ({ status }) => {
   try {
-    const response = await fetch(`${base_url}/jobsapplied`, {
+    let url = `${base_url}/jobsapplied`;
+    if (status) {
+      url += `?status=${encodeURIComponent(status)}`;
+    }
+
+    const response = await fetch(url, {
       method: "GET",
 
       headers: getAuthHeaders(),
@@ -193,3 +198,5 @@ export const fetchScheduleInterview = async (data) => {
     return { success: false, message: "Error scheduling interview" };
   }
 };
+
+

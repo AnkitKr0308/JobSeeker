@@ -115,3 +115,12 @@
   color: green;
   font-weight: normal;
 }
+
+.status-rejected {
+  color: red;
+  font-weight: bold;
+}
+.status-success {
+  color: green;
+  font-weight: bold;
+}

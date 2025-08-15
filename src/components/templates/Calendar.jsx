@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import "../../css/calendar.css";
 
 function Calendar({ value, onChange, min, max }) {
+  const [tempValue, setTempValue] = useState(value || "");
+
+  const handleConfirm = () => {
+    onChange(tempValue);
+  };
+
   return (
-    <label className="dt-field">
+    <div className="dt-field">
       <input
         type="datetime-local"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        value={tempValue}
+        onChange={(e) => setTempValue(e.target.value)}
         min={min}
         max={max}
         aria-label="Select interview date and time"
@@ -22,7 +28,10 @@ function Calendar({ value, onChange, min, max }) {
       >
         <path d="M7 2v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm12 6H5v11h14V8z" />
       </svg>
-    </label>
+      <button type="button" className="dt-ok-button" onClick={handleConfirm}>
+        OK
+      </button>
+    </div>
   );
 }
 

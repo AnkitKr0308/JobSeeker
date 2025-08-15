@@ -14,7 +14,7 @@ import Modal from "../templates/Modal";
 function FindJob() {
   const dispatch = useDispatch();
   const [jobs, SetJobs] = useState([]);
-  const [searchValue, SetSearchValue] = useState("");
+  const [searchValue, SetSearchValue] = useState({ searchbox: "" });
   const [selectedJobId, setSelectedJobId] = useState(null);
   const loading = useSelector((state) => state.job.loading);
   const [openSlider, setOpenSlider] = useState(false);
@@ -22,6 +22,7 @@ function FindJob() {
   const [modalData, setModalData] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const user = useSelector((state) => state.auth.data);
+  const [allJobs, setAllJobs] = useState([]);
 
   const handleCloseSlider = () => {
     setOpenSlider(false);
@@ -49,24 +50,43 @@ function FindJob() {
     const fetchedJobs = async () => {
       try {
         const result = await dispatch(findJob());
+        console.log("Thunk result:", result);
 
         const allJobs = Array.isArray(result.payload.fetchedjobdata)
           ? result.payload.fetchedjobdata
           : [];
-
-        const filteredJobs = allJobs.filter((job) =>
-          job.title
-            .toLowerCase()
-            .includes((searchValue.searchbox || "").toLowerCase())
-        );
-
-        SetJobs(filteredJobs);
+        setAllJobs(allJobs);
+        SetJobs(allJobs);
       } catch (e) {
         console.error("Error fetching jobs", e);
       }
     };
     fetchedJobs();
-  }, [dispatch, searchValue]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!searchValue.searchbox) {
+      SetJobs(allJobs);
+    } else {
+      const filteredItems = allJobs.filter((job) => {
+        const query = searchValue.searchbox.toLowerCase();
+        const fieldsToSearch = [
+          "title",
+          "jobId",
+          "description",
+          "skillsRequired",
+          "qualifications",
+          "locations",
+          "type",
+        ];
+
+        return fieldsToSearch.some((field) =>
+          job[field]?.toLowerCase().includes(query)
+        );
+      });
+      SetJobs(filteredItems);
+    }
+  }, [searchValue, allJobs]);
 
   const handleApplyNow = async (jobId) => {
     setSelectedJobId(jobId);
@@ -74,7 +94,7 @@ function FindJob() {
 
     if (
       checked.payload.result.success &&
-      checked.payload.result.message === "You have already applied for this job"
+      checked.payload.result.status === 404
     ) {
       setOpenModal(true);
       setModalData("You have already applied for this job");
@@ -112,6 +132,7 @@ function FindJob() {
                   }
                   subtitle={` ${job.title}`}
                   description={job.skillsRequired}
+                  descriptionLabel="Skills Required"
                   subdescription={`${job.qualifications} | ${job.locations} | ${job.type}`}
                   footer={
                     <>
@@ -127,13 +148,12 @@ function FindJob() {
                         >
                           {isExpanded ? "Hide Details" : "View Details"}
                         </NavLink>
-                        {user && user.role === "Employee" && (
-                          <Button
-                            className="apply-button"
-                            label="Apply Now"
-                            onClick={() => handleApplyNow(job.jobId)}
-                          />
-                        )}
+                        <Button
+                          className="apply-button"
+                          label="Apply Now"
+                          onClick={() => handleApplyNow(job.jobId)}
+                          disabled={!(user && user.role === "Employee")}
+                        />
                       </div>
                     </>
                   }

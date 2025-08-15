@@ -28,6 +28,9 @@ function Applications() {
   const loading = useSelector((state) => state.job.loading);
   const [openSlider, setOpenSlider] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState("");
+  const [disableBtn, setDisableBtn] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [allJobs, setAllJobs] = useState([]);
 
   const handleCloseSlider = () => {
     setOpenSlider(false);
@@ -52,15 +55,17 @@ function Applications() {
       setSelectedUserProfile(userProfile);
       setOpenSlider(true);
 
-      const updatedstatus = "Application Viewed";
-      const result = await dispatch(
-        UpdateApplicationStatus({
-          applicationId: application.id,
-          status: updatedstatus,
-        })
-      );
-      if (result.payload?.success) {
-        updateApplicationStatusInState(application.id, updatedstatus);
+      if (application.status === "Applied") {
+        const updatedstatus = "Application Viewed";
+        const result = await dispatch(
+          UpdateApplicationStatus({
+            applicationId: application.id,
+            status: updatedstatus,
+          })
+        );
+        if (result.payload?.success) {
+          updateApplicationStatusInState(application.id, updatedstatus);
+        }
       }
     }
   };
@@ -92,26 +97,43 @@ function Applications() {
     const fetchedJobs = async () => {
       try {
         const result = await dispatch(applications());
-
+        console.log(result);
         const allItems = Array.isArray(result.payload.result)
           ? result.payload.result
           : [];
-
-        const filteredItems = allItems.filter((item) =>
-          item?.application?.jobTitle
-            ?.toLowerCase()
-            .includes((searchValue.searchbox || "").toLowerCase())
-        );
-
-        SetAppliedJobs(filteredItems);
-
-        SetAppliedJobs(filteredItems);
+        setAllJobs(allItems);
+        SetAppliedJobs(allItems);
       } catch (e) {
         console.error("Error fetching jobs", e);
       }
     };
     fetchedJobs();
-  }, [dispatch, searchValue]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!searchValue.searchbox) {
+      SetAppliedJobs(allJobs);
+    } else {
+      const query = searchValue.searchbox.toLowerCase();
+      const fieldsToSearch = [
+        "jobTitle",
+        "jobId",
+        "jobDescription",
+        "skillsRequired",
+        "jobQualifications",
+        "jobLocations",
+        "jobExperience",
+        "userId",
+      ];
+
+      const filteredItems = allJobs.filter(({ application }) =>
+        fieldsToSearch.some((field) =>
+          application[field]?.toLowerCase().includes(query)
+        )
+      );
+      SetAppliedJobs(filteredItems);
+    }
+  }, [searchValue, allJobs]);
 
   const chooseSlot = () => {
     setSelectedDateTime("");
@@ -128,24 +150,72 @@ function Applications() {
       jobId: selectedApplication.jobId,
       userId: selectedApplication.userId,
       interviewDate: selectedDateTime,
-      
     };
-
-    
 
     const result = await dispatch(scheduleInterview(payload));
     if (result?.payload?.success) {
       setOpenModal(false);
+      setDisableBtn(true);
       updateApplicationStatusInState(
         selectedApplication.id,
         "Interview Scheduled"
       );
-      
+      setAlertMessage("Interview Scheduled");
+
+      setTimeout(() => {
+        setAlertMessage("");
+      }, 3000);
+    }
+  };
+
+  const rejectApplication = async () => {
+    const updatedstatus = "Rejected";
+
+    const isConfirmed = window.confirm(
+      "Are you sure you want to reject this application?"
+    );
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    const result = await dispatch(
+      UpdateApplicationStatus({
+        applicationId: selectedApplication.id,
+        status: updatedstatus,
+      })
+    );
+    if (result.payload?.success) {
+      updateApplicationStatusInState(selectedApplication.id, updatedstatus);
+      setAlertMessage("Application Rejected");
+
+      setTimeout(() => {
+        setAlertMessage("");
+      }, 3000);
     }
   };
 
   return (
     <div className="findjob-container" style={{ marginTop: "12px" }}>
+      {alertMessage && (
+        <div
+          style={{
+            position: "fixed",
+            top: "20px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            backgroundColor:
+              alertMessage === "Interview Scheduled" ? "#4CAF50" : "#f44336",
+            color: "white",
+            padding: "10px 20px",
+            borderRadius: "5px",
+            zIndex: 9999,
+            boxShadow: "0px 2px 10px rgba(0,0,0,0.3)",
+          }}
+        >
+          {alertMessage}
+        </div>
+      )}
       <div className="searchbox">
         <Input
           fields={searchFields}
@@ -170,6 +240,7 @@ function Applications() {
                   status={application.status}
                   subtitle={`Title: ${application.jobTitle}`}
                   description={application.skillsRequired}
+                  descriptionLabel="Skills Required"
                   subdescription={`${application.jobExperience} | ${application.jobQualifications} | ${application.jobLocations}`}
                   footer={
                     <>
@@ -214,6 +285,7 @@ function Applications() {
           </div>
         )}
       </div>
+
       {openSlider && selectedApplication && selectedUserProfile && (
         <Slider
           isOpen={openSlider}
@@ -243,8 +315,17 @@ function Applications() {
                   className="btn-blue"
                   label="Schedule Interview"
                   onClick={chooseSlot}
+                  disabled={
+                    disableBtn ||
+                    selectedApplication?.status === "Interview Scheduled"
+                  }
                 />
-                <Button className="btn-red" label="Reject" />
+
+                <Button
+                  className="btn-red"
+                  label="Reject"
+                  onClick={rejectApplication}
+                />
               </div>
             </div>
           </div>

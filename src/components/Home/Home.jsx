@@ -15,7 +15,9 @@ function Home() {
     navigate("/jobs");
   };
 
-  const navigateToInterview = () => {};
+  const navigateToInterview = () => {
+    navigate("/interviews");
+  };
 
   const navigateToAppliedJob = () => {
     navigate("/appliedjobs");

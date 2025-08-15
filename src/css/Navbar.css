@@ -97,18 +97,46 @@
   min-width: 250px;
   max-height: 300px;
   overflow-y: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
 }
 
 .notif-item {
   padding: 10px;
-  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f1f1;
 }
 
 .notif-item.unread {
-  background-color: #f9f9f9;
+  background-color: #f9f9ff;
   font-weight: bold;
 }
 
+.notif-item.read {
+  background-color: #fff;
+}
+
+.notif-separator {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 5px 0;
+}
+
+.clear-btn {
+  width: 100%;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  color: #6a6767;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.clear-btn:hover {
+  background-color: #f8d7da;
+}
 .empty {
   padding: 10px;
   text-align: center;

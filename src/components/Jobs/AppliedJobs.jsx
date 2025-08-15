@@ -12,6 +12,7 @@ function AppliedJobs() {
   const dispatch = useDispatch();
   const [selectedJobId, setSelectedJobId] = useState(null);
   const loading = useSelector((state) => state.job.loading);
+  const [allJobs, setAllJobs] = useState([]);
 
   const handleSearchChange = (e) => {
     const { id, value } = e.target;
@@ -33,25 +34,44 @@ function AppliedJobs() {
   useEffect(() => {
     const fetchedJobs = async () => {
       try {
-        const result = await dispatch(appliedJobs(searchValue.searchbox || ""));
+        const result = await dispatch(appliedJobs());
 
-        const allJobs = Array.isArray(result.payload.appliedjobs)
+        const allItems = Array.isArray(result.payload.appliedjobs)
           ? result.payload.appliedjobs
           : [];
 
-        const filteredJobs = allJobs.filter((job) =>
-          job.title
-            .toLowerCase()
-            .includes((searchValue.searchbox || "").toLowerCase())
-        );
-
-        SetJobs(filteredJobs);
+        setAllJobs(allItems);
+        SetJobs(allItems);
       } catch (e) {
         console.error("Error fetching jobs", e);
       }
     };
     fetchedJobs();
-  }, [dispatch, searchValue]);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!searchValue.searchbox) {
+      SetJobs(allJobs);
+    } else {
+      const filteredItems = allJobs.filter((job) => {
+        const query = searchValue.searchbox.toLowerCase();
+        const fieldsToSearch = [
+          "title",
+          "jobId",
+          "description",
+          "skillsRequired",
+          "qualifications",
+          "locations",
+          "experience",
+        ];
+
+        return fieldsToSearch.some((field) =>
+          job[field]?.toLowerCase().includes(query)
+        );
+      });
+      SetJobs(filteredItems);
+    }
+  }, [searchValue, allJobs]);
 
   return (
     <div className="findjob-container" style={{ marginTop: "12px" }}>
@@ -76,9 +96,10 @@ function AppliedJobs() {
                       ? `Job Details: ${job.jobId}`
                       : `Job No: ${job.jobId}`
                   }
-                  status={` ${job.status}`}
+                  status={`${job.status}`}
                   subtitle={`${job.title}`}
                   description={job.skillsRequired}
+                  descriptionLabel="Skills Required"
                   subdescription={`${job.qualifications} | ${job.locations} | ${job.type}`}
                   footer={
                     <>

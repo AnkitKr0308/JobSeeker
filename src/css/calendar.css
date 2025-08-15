@@ -1,11 +1,10 @@
-/* CSS */
 .dt-field {
   position: relative;
   display: inline-block;
 }
 
 .dt-field input[type="datetime-local"] {
-  padding: 10px 40px 10px 12px; /* right padding for icon */
+  padding: 10px 40px 10px 12px;
   font-size: 14px;
   line-height: 1.2;
 }
@@ -17,11 +16,24 @@
   width: 20px;
   height: 20px;
   transform: translateY(-50%);
-  pointer-events: none; /* click goes to input (opens picker) */
+  pointer-events: none;
   fill: #888;
 }
 
-/* optional focus style */
 .dt-field input:focus + .dt-icon {
   fill: #555;
+}
+
+.dt-ok-button {
+  margin-left: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+  border: 1px solid #888;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.dt-ok-button:hover {
+  background-color: #e0e0e0;
 }
