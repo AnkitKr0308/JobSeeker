@@ -39,7 +39,7 @@ function Applications() {
   const updateApplicationStatusInState = (applicationId, newStatus) => {
     SetAppliedJobs((prev) =>
       prev.map((item) =>
-        item.application.id === applicationId
+        item.application.applicationId === applicationId
           ? {
               ...item,
               application: { ...item.application, status: newStatus },
@@ -59,12 +59,15 @@ function Applications() {
         const updatedstatus = "Application Viewed";
         const result = await dispatch(
           UpdateApplicationStatus({
-            applicationId: application.id,
+            applicationId: application.applicationId,
             status: updatedstatus,
           })
         );
         if (result.payload?.success) {
-          updateApplicationStatusInState(application.id, updatedstatus);
+          updateApplicationStatusInState(
+            application.applicationId,
+            updatedstatus
+          );
         }
       }
     }
@@ -97,7 +100,7 @@ function Applications() {
     const fetchedJobs = async () => {
       try {
         const result = await dispatch(applications());
-        console.log(result);
+        
         const allItems = Array.isArray(result.payload.result)
           ? result.payload.result
           : [];
@@ -181,12 +184,15 @@ function Applications() {
 
     const result = await dispatch(
       UpdateApplicationStatus({
-        applicationId: selectedApplication.id,
+        applicationId: selectedApplication.applicationId,
         status: updatedstatus,
       })
     );
     if (result.payload?.success) {
-      updateApplicationStatusInState(selectedApplication.id, updatedstatus);
+      updateApplicationStatusInState(
+        selectedApplication.applicationId,
+        updatedstatus
+      );
       setAlertMessage("Application Rejected");
 
       setTimeout(() => {

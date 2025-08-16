@@ -1,38 +1,106 @@
 import React, { useState } from "react";
 import "../../css/calendar.css";
 
-function Calendar({ value, onChange, min, max }) {
-  const [tempValue, setTempValue] = useState(value || "");
+const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
-  const handleConfirm = () => {
-    onChange(tempValue);
+const Calendar = () => {
+  const today = new Date();
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState("");
+
+  const prevMonth = () => {
+    setCurrentMonth(prev => {
+      if (prev === 0) {
+        setCurrentYear(year => year - 1);
+        return 11;
+      }
+      return prev - 1;
+    });
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(prev => {
+      if (prev === 11) {
+        setCurrentYear(year => year + 1);
+        return 0;
+      }
+      return prev + 1;
+    });
+  };
+
+  const renderDates = () => {
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const blanks = Array(firstDay).fill(null);
+    const dates = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+    return [...blanks, ...dates];
+  };
+
+  const handleDateClick = (date) => {
+    if (!date) return;
+    setSelectedDate(new Date(currentYear, currentMonth, date));
+  };
+
+  const handleTimeChange = (e) => {
+    setSelectedTime(e.target.value);
   };
 
   return (
-    <div className="dt-field">
-      <input
-        type="datetime-local"
-        value={tempValue}
-        onChange={(e) => setTempValue(e.target.value)}
-        min={min}
-        max={max}
-        aria-label="Select interview date and time"
-        placeholder="Select date & time"
-      />
-      <svg
-        className="dt-icon"
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-        onClick={(e) => e.target.previousSibling.showPicker?.()}
-        style={{ cursor: "pointer" }}
-      >
-        <path d="M7 2v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm12 6H5v11h14V8z" />
-      </svg>
-      <button type="button" className="dt-ok-button" onClick={handleConfirm}>
-        OK
-      </button>
+    <div className="calendar-container">
+      <div className="calendar">
+        <div className="calendar-header">
+          <button onClick={prevMonth}>&lt;</button>
+          <h3>{`${monthNames[currentMonth]} ${currentYear}`}</h3>
+          <button onClick={nextMonth}>&gt;</button>
+        </div>
+
+        <div className="calendar-body">
+          {dayNames.map(day => (
+            <div key={day} className="day">{day}</div>
+          ))}
+          {renderDates().map((date, index) => {
+            const isToday = date === today.getDate() &&
+                            currentMonth === today.getMonth() &&
+                            currentYear === today.getFullYear();
+            const isSelected = selectedDate && date === selectedDate.getDate() &&
+                               currentMonth === selectedDate.getMonth() &&
+                               currentYear === selectedDate.getFullYear();
+            return (
+              <div
+                key={index}
+                className={`date ${isToday ? "today" : ""} ${isSelected ? "selected" : ""}`}
+                onClick={() => handleDateClick(date)}
+              >
+                {date || ""}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {selectedDate && (
+        <div className="time-selector">
+          <label>
+            Select time:{" "}
+            <input type="time" value={selectedTime} onChange={handleTimeChange} />
+          </label>
+          <input
+            type="text"
+            readOnly
+            value={
+              selectedTime
+                ? `${selectedDate.toDateString()} ${selectedTime}`
+                : selectedDate.toDateString()
+            }
+            placeholder="Selected date and time"
+          />
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default Calendar;

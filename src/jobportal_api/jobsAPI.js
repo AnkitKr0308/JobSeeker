@@ -152,13 +152,11 @@ export const fetchCheckAppliedJob = async (jobId) => {
 export const fetchUpdateApplicationStatus = async (applicationId, status) => {
   try {
     const response = await fetch(
-      `${base_url}/updatestatus/?applicationId=${applicationId}&status=${encodeURIComponent(
-        status
-      )}`,
+      `${base_url}/updatestatus?applicationId=${applicationId}`,
       {
         method: "PUT",
         headers: getAuthHeaders(),
-        body: JSON.stringify({ applicationId, status }),
+        body: JSON.stringify(status),
       }
     );
 
@@ -199,4 +197,18 @@ export const fetchScheduleInterview = async (data) => {
   }
 };
 
-
+export const fetchGetInterviewById = async (appId) => {
+  try {
+    const response = await fetch(`${base_url}/interviews/${appId}`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+    });
+    const result = await response.json();
+    if (response) {
+      return result;
+    }
+  } catch (e) {
+    console.error("Error fetching interview by ID", e);
+    return { success: false, message: "Error fetching interview details" };
+  }
+};

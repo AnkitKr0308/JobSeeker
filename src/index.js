@@ -92,7 +92,7 @@ const router = createBrowserRouter([
         element: <InterviewPage />,
       },
       {
-        path: "/interviews/:id",
+        path: "/interviews/:appId",
         element: <InterviewDetails />,
       },
     ],

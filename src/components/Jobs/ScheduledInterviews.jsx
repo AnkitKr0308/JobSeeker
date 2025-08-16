@@ -89,7 +89,9 @@ function ScheduledInterviews() {
                 description={formattedDate}
                 descriptionLabel="Interview Timing"
                 onClick={() =>
-                  navigate(`/interviews/${interview.id}`, { state: interview })
+                  navigate(`/interviews/${interview.applicationId}`, {
+                    state: interview,
+                  })
                 }
               />
             </div>
