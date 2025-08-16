@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
-  fetchGetNotification,
+
   fetchProfiles,
-  fetchUpdateNotificationStatus,
+
   fetchUpdateProfile,
   fetchUserProfile,
 } from "../jobportal_api/userAPI";
@@ -25,21 +25,21 @@ export const userProfileUpdate = createAsyncThunk(
   }
 );
 
-export const getNotifications = createAsyncThunk(
-  "user/getNotifications",
-  async () => {
-    const res = await fetchGetNotification();
-    return res;
-  }
-);
+// export const getNotifications = createAsyncThunk(
+//   "user/getNotifications",
+//   async () => {
+//     const res = await fetchGetNotification();
+//     return res;
+//   }
+// );
 
-export const updateNotificationStatus = createAsyncThunk(
-  "user/updateNotificationStatus",
-  async (notificationData) => {
-    const res = await fetchUpdateNotificationStatus(notificationData);
-    return res;
-  }
-);
+// export const updateNotificationStatus = createAsyncThunk(
+//   "user/updateNotificationStatus",
+//   async (notificationData) => {
+//     const res = await fetchUpdateNotificationStatus(notificationData);
+//     return res;
+//   }
+// );
 
 const userSlice = createSlice({
   name: "user",
@@ -89,30 +89,30 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
-      .addCase(getNotifications.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getNotifications.fulfilled, (state, action) => {
-        state.loading = false;
-        state.data = action.payload;
-        state.status = action.payload.success;
-      })
-      .addCase(getNotifications.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
-      .addCase(updateNotificationStatus.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(updateNotificationStatus.fulfilled, (state, action) => {
-        state.loading = false;
-        state.data = action.payload;
-        state.status = action.payload.success;
-      })
-      .addCase(updateNotificationStatus.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      });
+      // .addCase(getNotifications.pending, (state) => {
+      //   state.loading = true;
+      // })
+      // .addCase(getNotifications.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.data = action.payload;
+      //   state.status = action.payload.success;
+      // })
+      // .addCase(getNotifications.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.error.message;
+      // })
+      // .addCase(updateNotificationStatus.pending, (state) => {
+      //   state.loading = true;
+      // })
+      // .addCase(updateNotificationStatus.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.data = action.payload;
+      //   state.status = action.payload.success;
+      // })
+      // .addCase(updateNotificationStatus.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.error.message;
+      // });
   },
 });
 

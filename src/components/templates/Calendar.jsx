@@ -1,10 +1,23 @@
 import React, { useState } from "react";
 import "../../css/calendar.css";
 
-const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-const dayNames = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-const Calendar = () => {
+const Calendar = ({ value, onChange }) => {
   const today = new Date();
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
@@ -12,9 +25,9 @@ const Calendar = () => {
   const [selectedTime, setSelectedTime] = useState("");
 
   const prevMonth = () => {
-    setCurrentMonth(prev => {
+    setCurrentMonth((prev) => {
       if (prev === 0) {
-        setCurrentYear(year => year - 1);
+        setCurrentYear((year) => year - 1);
         return 11;
       }
       return prev - 1;
@@ -22,9 +35,9 @@ const Calendar = () => {
   };
 
   const nextMonth = () => {
-    setCurrentMonth(prev => {
+    setCurrentMonth((prev) => {
       if (prev === 11) {
-        setCurrentYear(year => year + 1);
+        setCurrentYear((year) => year + 1);
         return 0;
       }
       return prev + 1;
@@ -41,11 +54,27 @@ const Calendar = () => {
 
   const handleDateClick = (date) => {
     if (!date) return;
-    setSelectedDate(new Date(currentYear, currentMonth, date));
+    const newDate = new Date(currentYear, currentMonth, date);
+
+    setSelectedDate(newDate);
+
+    if (selectedTime) {
+      const [hours, minutes] = selectedTime.split(":");
+      newDate.setHours(hours, minutes, 0);
+      onChange(newDate);
+    } else {
+      onChange(newDate);
+    }
   };
 
   const handleTimeChange = (e) => {
     setSelectedTime(e.target.value);
+    if (selectedDate) {
+      const newDateTime = new Date(selectedDate);
+      const [hours, minutes] = e.target.value.split(":");
+      newDateTime.setHours(hours, minutes, 0);
+      onChange(newDateTime);
+    }
   };
 
   return (
@@ -58,20 +87,27 @@ const Calendar = () => {
         </div>
 
         <div className="calendar-body">
-          {dayNames.map(day => (
-            <div key={day} className="day">{day}</div>
+          {dayNames.map((day) => (
+            <div key={day} className="day">
+              {day}
+            </div>
           ))}
           {renderDates().map((date, index) => {
-            const isToday = date === today.getDate() &&
-                            currentMonth === today.getMonth() &&
-                            currentYear === today.getFullYear();
-            const isSelected = selectedDate && date === selectedDate.getDate() &&
-                               currentMonth === selectedDate.getMonth() &&
-                               currentYear === selectedDate.getFullYear();
+            const isToday =
+              date === today.getDate() &&
+              currentMonth === today.getMonth() &&
+              currentYear === today.getFullYear();
+            const isSelected =
+              selectedDate &&
+              date === selectedDate.getDate() &&
+              currentMonth === selectedDate.getMonth() &&
+              currentYear === selectedDate.getFullYear();
             return (
               <div
                 key={index}
-                className={`date ${isToday ? "today" : ""} ${isSelected ? "selected" : ""}`}
+                className={`date ${isToday ? "today" : ""} ${
+                  isSelected ? "selected" : ""
+                }`}
                 onClick={() => handleDateClick(date)}
               >
                 {date || ""}
@@ -85,7 +121,11 @@ const Calendar = () => {
         <div className="time-selector">
           <label>
             Select time:{" "}
-            <input type="time" value={selectedTime} onChange={handleTimeChange} />
+            <input
+              type="time"
+              value={selectedTime}
+              onChange={handleTimeChange}
+            />
           </label>
           <input
             type="text"

@@ -28,7 +28,7 @@ function Applications() {
   const loading = useSelector((state) => state.job.loading);
   const [openSlider, setOpenSlider] = useState(false);
   const [selectedDateTime, setSelectedDateTime] = useState("");
-  const [disableBtn, setDisableBtn] = useState(false);
+  // const [disableBtn, setDisableBtn] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [allJobs, setAllJobs] = useState([]);
 
@@ -100,7 +100,7 @@ function Applications() {
     const fetchedJobs = async () => {
       try {
         const result = await dispatch(applications());
-        
+
         const allItems = Array.isArray(result.payload.result)
           ? result.payload.result
           : [];
@@ -149,18 +149,19 @@ function Applications() {
       return;
     }
     const payload = {
-      applicationId: selectedApplication.id,
+      // id: selectedApplication.id,
+      applicationId: selectedApplication.applicationId,
       jobId: selectedApplication.jobId,
       userId: selectedApplication.userId,
-      interviewDate: selectedDateTime,
+      interviewDate: selectedDateTime.toISOString(),
     };
 
     const result = await dispatch(scheduleInterview(payload));
     if (result?.payload?.success) {
       setOpenModal(false);
-      setDisableBtn(true);
+      // setDisableBtn(true);
       updateApplicationStatusInState(
-        selectedApplication.id,
+        selectedApplication.applicationId,
         "Interview Scheduled"
       );
       setAlertMessage("Interview Scheduled");
@@ -322,7 +323,6 @@ function Applications() {
                   label="Schedule Interview"
                   onClick={chooseSlot}
                   disabled={
-                    disableBtn ||
                     selectedApplication?.status === "Interview Scheduled"
                   }
                 />
