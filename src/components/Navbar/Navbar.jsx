@@ -8,7 +8,11 @@ import {
   addNotification,
 } from "../../store/notificationSlice";
 import "../../css/Navbar.css";
-import notificationService from "../../conf/NotificationService";
+import {
+  createConnection,
+  startConnection,
+  stopConnection,
+} from "../../conf/NotificationService";
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -18,7 +22,6 @@ function Navbar() {
   const notifications = useSelector(
     (state) => state.notification.notifications || []
   );
-
   const loading = useSelector((state) => state.auth.loading);
 
   const navigate = useNavigate();
@@ -50,13 +53,18 @@ function Navbar() {
     dispatch(getNotifications());
 
     const token = localStorage.getItem("token");
+    if (!token) return;
 
-    notificationService.startConnection(token, (notification) => {
+    // ✅ Step 1: create the connection
+    createConnection(token);
+
+    // ✅ Step 2: start listening
+    startConnection((notification) => {
       dispatch(addNotification(notification));
     });
 
     return () => {
-      notificationService.stopConnection();
+      stopConnection();
     };
   }, [user, dispatch]);
 
